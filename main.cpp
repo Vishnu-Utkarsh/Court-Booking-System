@@ -6,52 +6,55 @@
 #include "data.cpp"
 #include "operation.cpp"
 
-void displayOptions()
+void operate()
 {
-    cout << std::endl;
-    #ifdef _WIN32
-        std::system("cls"); // For Windows
-    #else
-        // Assume POSIX (Linux, macOS, etc.)
-        std::system("clear"); 
-    #endif
-
-    std::cout << "----------------------------------------------------" << std::endl;
-    std::cout << "Enter 1 to create new user account:" << std::endl;
-    std::cout << "Enter 2 to display user's data:" << std::endl;
-    std::cout << "Enter 3 to display court data:" << std::endl;
-    std::cout << "Enter 4 to login to your account:" << std::endl;
-    std::cout << "Enter -1 to Exit:" << std::endl;
-    std::cout << std::endl;
-}
-
-bool operate(int task)
-{
-    switch(task)
+    while(true)
     {
-        case 1: createAccount();    break;
-        case 2: displayUserData();  break;
-        case 3: displayCourtData(); break;
-        case 4: userLogin();        break;
+        cout << std::endl;
+        #ifdef _WIN32
+            std::system("cls"); // For Windows
+        #else
+            // Assume POSIX (Linux, macOS, etc.)
+            std::system("clear");
+        #endif
 
-        case -1:
+        std::cout << std::endl;
+        std::cout << "----------------------------------------------------" << std::endl;
+        std::cout << "Enter 1 to create new user account:" << std::endl;
+        std::cout << "Enter 2 to display user's data:" << std::endl;
+        std::cout << "Enter 3 to display court data:" << std::endl;
+        std::cout << "Enter 4 to login to your account:" << std::endl;
+        std::cout << "Enter 0 to Exit:" << std::endl;
+        std::cout << std::endl;
+
+        int task;
+        cin >> task;
+
+        switch(task)
         {
-            std::cerr << std::endl;
-            saveUserData("userData.csv");
-            saveCourtData("courtData.csv");
+            case 1: createAccount();    break;
+            case 2: userLogin();        break;
+            case 3: displayUserData();  break;
+            case 4: displayCourtData(); break;
 
-            std::time_t now = std::time(0);
-            std::tm *local_time_struct = std::localtime(&now);
+            case 0:
+            {
+                std::cerr << std::endl;
+                saveUserData("userData.csv");
+                saveCourtData("courtData.csv");
 
-            std::cerr << "\n Data Updated by: " << std::put_time(local_time_struct, "%Y-%m-%d %H:%M:%S");
-            cout << "\n~~Exit~~";
+                std::time_t now = std::time(0);
+                std::tm *local_time_struct = std::localtime(&now);
 
-            return false;
-            break;
+                std::cerr << "\n Data Updated by: " << std::put_time(local_time_struct, "%Y-%m-%d %H:%M:%S");
+                cout << "\n~~Exit~~";
+
+                return;
+                break;
+            }
+            default:    std::cout << "Enter valid operation !" << std::endl;    break;
         }
-        default:    std::cout << "Enter valid operation !" << std::endl;
     }
-    return true;
 }
 
 int main()
@@ -68,10 +71,5 @@ int main()
     readCourtData("courtData.csv");
     std::cerr << std::endl;
 
-    int T;
-    do
-    {
-        displayOptions();
-        std::cin >> T;
-    }   while (operate(T));
+    operate();
 }

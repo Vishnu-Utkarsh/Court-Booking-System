@@ -47,10 +47,10 @@ void readUserData(const std::string &filename)
         if (row_fields.empty())
             continue;
 
-        bool status = stoi(row_fields[2]);
+        int state = stoi(row_fields[2]);
         string username = row_fields[0], password = row_fields[1];
 
-        users[username] = User(username, password, status);
+        users[username] = User(username, password, (userStatus) state);
     }
 
     file.close();
@@ -160,7 +160,13 @@ string User::saveFile()
     output.push_back(',');
     output += password;
     output.push_back(',');
-    output += to_string(busy);
+
+    switch(currState)
+    {
+        case FREE:      output.push_back('0');  break;
+        case BOOKED:    output.push_back('1');  break;
+        case BANNED:    output.push_back('2');  break;
+    }
     return output;
 }
 void saveUserData(const std::string &filename)
