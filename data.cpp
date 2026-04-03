@@ -18,7 +18,7 @@ void displayCourtData()
 {
     cout << "Court Status" << endl;
     for(auto &data : courts)
-        print(data);
+        print(*data);
 }
 
 // read from CSV file
@@ -145,7 +145,7 @@ void readCourtData(const std::string &filename)
 
             default:    std::cerr << "Currupted File !" << std::endl;   return;
         }
-        courts.push_back(*court);
+        courts.push_back(court);
     }
 
     file.close();
@@ -197,7 +197,7 @@ string Court::saveFile()
     output.push_back(',');
     output += to_string(courtNumber);
 
-    if(available)   return output;
+    if(currState != RESERVED)   return output;
 
     output.push_back(',');
     output += bookedBy;
@@ -214,7 +214,7 @@ void saveCourtData(const std::string &filename)
     }
 
     for (auto &court : courts)
-        file << court.saveFile() << std::endl;
+        file << court -> saveFile() << std::endl;
 
     file.close();
     std::cerr << "CSV file created and court data written successfully." << std::endl;

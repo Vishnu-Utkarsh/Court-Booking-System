@@ -20,17 +20,34 @@ std::ostream& operator<<(std::ostream& os, type courtType)
     return os;
 }
 
+// Court Status
+enum courtStatus
+{   AVAILABLE, RESERVED, Maintainace };
+
+std::ostream& operator<<(std::ostream& os, courtStatus currState)
+{
+    switch (currState)
+    {
+        case courtStatus::AVAILABLE:    os << "Available";          break;
+        case courtStatus::RESERVED:     os << "RESERVED";           break;
+        case courtStatus::Maintainace:  os << "under Maintainace";  break;
+        default:                        os << "UNKNOWN";            break;
+    }
+    return os;
+}
+
 // Parent Class Court
 class Court
 {
 private:
-    bool available;
+    // maintainance section to be added
+    courtStatus currState;
     int courtNumber = 0;
     string courtName, bookedBy;
     type courtType;
 
 protected:
-    void switchStatus();
+    void switchStatus(courtStatus newState);
     bool checkAvailibility() const;
     bool book(const string &name);
 
@@ -51,24 +68,24 @@ public:
         if(court.courtNumber)   os << ' ' << court.courtNumber;
         os << "\t\t";
         os << "type: " << court.courtType << "\t\t";
-        os << "status: " << (court.checkAvailibility() ? "Available" : "Not Available") << "\t\t";
+        os << "status: " << (court.checkAvailibility() ? "FREE" : "Not FREE") << "\t\t";
         return os;
     }
 };
 
 // forward declaration
-Court::Court() : available(true) {}
-Court::Court(type courtType, string courtName) : available(true), courtName(courtName), courtType(courtType) {}
-Court::Court(type courtType, string courtName, int courtNumber) : available(true), courtName(courtName), courtType(courtType), courtNumber(courtNumber) {}
-Court::Court(type courtType, string courtName, string bookedBy, int courtNumber = 0) : available(false), courtName(courtName), courtType(courtType), bookedBy(bookedBy), courtNumber(courtNumber) {}
+Court::Court() : currState(AVAILABLE) {}
+Court::Court(type courtType, string courtName) : currState(AVAILABLE), courtName(courtName), courtType(courtType) {}
+Court::Court(type courtType, string courtName, int courtNumber) : currState(AVAILABLE), courtName(courtName), courtType(courtType), courtNumber(courtNumber) {}
+Court::Court(type courtType, string courtName, string bookedBy, int courtNumber = 0) : currState(RESERVED), courtName(courtName), courtType(courtType), bookedBy(bookedBy), courtNumber(courtNumber) {}
 
-void Court::switchStatus() { available ^= true; }
-bool Court::checkAvailibility() const { return available; }
+void Court::switchStatus(courtStatus newState) { currState = newState; }
+bool Court::checkAvailibility() const { return currState; }
 bool Court::book(const string &name)
 {
-    if(! available) return false;
+    if(currState)   return false;   // Booked or in Maintainance
 
-    available = false;
+    currState = RESERVED;
     bookedBy = name;
     return true;
 }

@@ -21,9 +21,9 @@ void operate()
         std::cout << std::endl;
         std::cout << "----------------------------------------------------" << std::endl;
         std::cout << "Enter 1 to create new user account:" << std::endl;
-        std::cout << "Enter 2 to display user's data:" << std::endl;
-        std::cout << "Enter 3 to display court data:" << std::endl;
-        std::cout << "Enter 4 to login to your account:" << std::endl;
+        std::cout << "Enter 2 to login to your account:" << std::endl;
+        std::cout << "Enter 3 to display user's data:" << std::endl;
+        std::cout << "Enter 4 to display court data:" << std::endl;
         std::cout << "Enter 0 to Exit:" << std::endl;
         std::cout << std::endl;
 

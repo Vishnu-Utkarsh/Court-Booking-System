@@ -2,24 +2,13 @@
 #define TEMPLATE
 
 #include <bits/stdc++.h>
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/tree_policy.hpp>
-// #pragma GCC optimize("O3,unroll-loops")
-
 using namespace std;
-using namespace __gnu_pbds;
-
-typedef tree<long long, null_type, less_equal<long long>, rb_tree_tag, tree_order_statistics_node_update> pbds;
 
 
 // -------------------- DEBUGGING --------------------
 
 #define fastio   ios_base::sync_with_stdio(false);   cin.tie(NULL);
-#ifndef ONLINE_JUDGE
 #define debug(x) cerr << #x <<" = "; _print(x); cerr << endl;
-#else
-#define debug(x)
-#endif
 
 void _print(int x) {cerr << x;}
 void _print(long x) {cerr << x;}    
@@ -50,10 +39,7 @@ template<typename T> void _print(const multiset<T> &v);
 template<typename T> void _print(const set<T> &v);
 template<typename T> void _print(const vector<T> &v);
 template<typename T, typename V> void _print(const pair<T, V> &x);
-template<typename T> void _print(const pbds &v);
 
-void _print(const pbds &v)
-    {   cerr << '['; for (auto &i : v)  cerr << i << " "; cerr << ']';}
 template<typename T, typename V> void _print(const pair<T, V> &x)
     {   cerr << '{'; _print(x.first); cerr << ", "; _print(x.second); cerr << '}';}
 template<typename T> void _print(const vector<T> &v)
