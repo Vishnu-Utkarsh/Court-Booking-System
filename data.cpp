@@ -163,9 +163,8 @@ string User::saveFile()
 
     switch(currState)
     {
-        case FREE:      output.push_back('0');  break;
-        case BOOKED:    output.push_back('1');  break;
-        case BANNED:    output.push_back('2');  break;
+        case AUTHORIZED:    output.push_back('0');  break;
+        case BANNED:        output.push_back('1');  break;
     }
     return output;
 }

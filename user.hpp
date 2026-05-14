@@ -2,28 +2,31 @@
 #define USER
 
 #include "Template.hpp"
+#include "court.hpp"
 
 // User Status
 enum userStatus
-{   FREE, BOOKED, BANNED };
+{   AUTHORIZED, BANNED };
 
 std::ostream& operator<<(std::ostream& os, userStatus currState)
 {
     switch (currState)
     {
-        case userStatus::FREE:      os << "FREE";       break;
-        case userStatus::BOOKED:    os << "BOOKED";     break;
-        case userStatus::BANNED:    os << "BANNED";     break;
-        default:                    os << "UNKNOWN";    break;
+        case userStatus::AUTHORIZED:    os << "AUTHORIZED"; break;
+        case userStatus::BANNED:        os << "BANNED";     break;
+        default:                        os << "UNKNOWN";    break;
     }
     return os;
 }
+
+const int bookingLimit = 2;
 
 class User
 {
 private:
     userStatus currState;
     std::string username, password;
+    vector<Court *> booked;
 
 public:
     // constructor
@@ -33,7 +36,7 @@ public:
 
     // getters
     std::string getUsername();
-    std::string getPassword();
+    std::string getPassword();  // remove
     userStatus getStatus();
 
     // authentication
@@ -42,6 +45,8 @@ public:
 
     // switch userStatus
     void switchStatus(const userStatus newStatus);
+    void bookings();
+    void book();
 
     // save file
     string saveFile();
@@ -57,11 +62,11 @@ public:
 
 // forward declaration
 User::User() {}
-User::User (const std::string &name, const std::string &pass) : username(name), password(pass), currState(FREE) {}
+User::User (const std::string &name, const std::string &pass) : username(name), password(pass), currState(AUTHORIZED) {}
 User::User (const std::string &name, const std::string &pass, const userStatus newState) : username(name), password(pass), currState(newState) {}
 
 std::string User::getUsername() { return username; }
-std::string User::getPassword() { return password; }
+std::string User::getPassword() { return password; }    // remove
 userStatus User::getStatus() { return currState; }
 
 bool User::checkPassword(const std::string &password) { return password == this -> password; }

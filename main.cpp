@@ -47,7 +47,7 @@ void operate()
                 std::tm *local_time_struct = std::localtime(&now);
 
                 std::cerr << "\n Data Updated by: " << std::put_time(local_time_struct, "%Y-%m-%d %H:%M:%S");
-                cout << "\n~~Exit~~";
+                std::cout << "\n~~Exit~~";
 
                 return;
                 break;

@@ -96,31 +96,84 @@ void userLogin()
     std::cout << std::endl;
     debug(loginUser);
     loginUser.Login(password);
-    std::cout << "Successfully Logged Out !" << std::endl;
+}
+
+// incomplete
+void User::bookings()
+{
+    if(booked.empty())
+    {
+        std::cout << std::endl;
+        std::cout << "No Previous Bookings" << std::endl;
+        std::cout << std::endl;
+    }
+    else
+    {
+        std::cout << std::endl;
+        std::cout << "Bookings-" << std::endl;
+
+        for (int index = 0; index < (int)booked.size(); index++)
+        {
+            std::cout << booked[index] << std::endl;
+        }
+        std::cout << std::endl;
+    }
+    std::cout << "Enter 0 for back:" << std::endl;
+    return;
+}
+
+// incomplete
+void User::book()
+{
+    std::cout << "Select Court :-" << std::endl;
+    return;
 }
 
 void User::Login(const std::string &password)
 {
-    if (password != this->password)
+    if (password != this -> password)
         return;
     std::cout << "Successfully Logged In !" << std::endl;
+    int task = 0;
 
-    switch(currState)
+    while(true)
     {
-        // case FREE:      output.push_back('0');  break;
-        // case BOOKED:    output.push_back('1');  break;
-        // case BANNED:    output.push_back('2');  break;
-        default:    break;
+        cout << std::endl;
+        #ifdef _WIN32
+            std::system("cls"); // For Windows
+        #else
+            // Assume POSIX (Linux, macOS, etc.)
+            std::system("clear");
+        #endif
+
+        if(currState == BANNED)
+        {
+            std::cout << std::endl;
+            std::cout << "ID Banned !" << std::endl;
+            std::cout << "Press any key to logOut" << std::endl;
+            std::cout << std::endl;
+            std::cin >> task;
+            break;
+        }
+
+        std::cout << std::endl;
+        std::cout << "----------------------------------------------------" << std::endl;
+        std::cout << "Choose tab :-" << std::endl;
+        std::cout << "Enter 1 for Bookings Tab:" << std::endl;
+        std::cout << "Enter 2 to Book Court:" << std::endl;
+        std::cout << "Enter 0 to Logout:" << std::endl;
+        std::cout << std::endl;
+
+        cin >> task;
+        if(! task)  break;
+
+        switch(task)
+        {
+            case 1: bookings(); break;
+            case 2: book();     break;
+            default:    std::cout << "Enter valid operation !" << std::endl;    break;
+        }
     }
 
-    std::cout << std::endl;
-    std::cout << "----------------------------------------------------" << std::endl;
-    std::cout << "Select Court :-" << std::endl;
-    std::cout << "Enter 1 to Select Badminton:" << std::endl;
-    std::cout << "Enter 2 to Select Volleyball:" << std::endl;
-    std::cout << "Enter 3 to Select Basketball:" << std::endl;
-    std::cout << "Enter 4 to Select Football:" << std::endl;
-    std::cout << "Enter 5 to Select Cricket:" << std::endl;
-    std::cout << "Enter 0 to Exit:" << std::endl;
-    std::cout << std::endl;
+    std::cout << "Successfully Logged Out !" << std::endl;
 }

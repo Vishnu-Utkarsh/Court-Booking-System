@@ -36,11 +36,12 @@ std::ostream& operator<<(std::ostream& os, courtStatus currState)
     return os;
 }
 
+const int durationLimit = 3;    // hrs
+
 // Parent Class Court
 class Court
 {
 private:
-    // maintainance section to be added
     courtStatus currState;
     int courtNumber = 0;
     string courtName, bookedBy;
