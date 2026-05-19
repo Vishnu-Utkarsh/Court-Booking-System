@@ -42,6 +42,7 @@ void operate()
                 std::cerr << std::endl;
                 saveUserData("userData.csv");
                 saveCourtData("courtData.csv");
+                saveBookings("bookings.csv");
 
                 std::time_t now = std::time(0);
                 std::tm *local_time_struct = std::localtime(&now);
@@ -69,6 +70,7 @@ int main()
 
     readUserData("userData.csv");
     readCourtData("courtData.csv");
+    readBookings("bookings.csv");
     std::cerr << std::endl;
 
     operate();

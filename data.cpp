@@ -47,7 +47,7 @@ void readUserData(const std::string &filename)
         if (row_fields.empty())
             continue;
 
-        int state = stoi(row_fields[2]);
+        int state = std::stoi(row_fields[2]);
         string username = row_fields[0], password = row_fields[1];
 
         users[username] = User(username, password, (userStatus) state);
@@ -90,56 +90,36 @@ void readCourtData(const std::string &filename)
         {
             case 1:
             {
-                int courtNumber = stoi(row_fields[1]);
-
-                if(row_fields.size() == 2)
-                    court = new Badminton(courtNumber);
-                else
-                    court = new Badminton(courtNumber, row_fields[2]);
+                int courtNumber = std::stoi(row_fields[1]);
+                court = new Badminton(courtNumber);
                 break;
             }
 
             case 2:
             {
-                int courtNumber = stoi(row_fields[1]);
-
-                if(row_fields.size() == 2)
-                    court = new Basketball(courtNumber);
-                else
-                    court = new Basketball(courtNumber, row_fields[2]);
+                int courtNumber = std::stoi(row_fields[1]);
+                court = new Basketball(courtNumber);
                 break;
             }
         
             case 3:
             {
-                int courtNumber = stoi(row_fields[1]);
-
-                if(row_fields.size() == 2)
-                    court = new Volleyball(courtNumber);
-                else
-                    court = new Volleyball(courtNumber, row_fields[2]);
+                int courtNumber = std::stoi(row_fields[1]);
+                court = new Volleyball(courtNumber);
                 break;
             }
         
             case 4:
             {
-                int courtNumber = stoi(row_fields[1]);
-
-                if(row_fields.size() == 2)
-                    court = new Football(courtNumber);
-                else
-                    court = new Football(courtNumber, row_fields[2]);
+                int courtNumber = std::stoi(row_fields[1]);
+                court = new Football(courtNumber);
                 break;
             }
         
             case 5:
             {
-                int courtNumber = stoi(row_fields[1]);
-
-                if(row_fields.size() == 2)
-                    court = new Cricket(courtNumber);
-                else
-                    court = new Cricket(courtNumber, row_fields[2]);
+                int courtNumber = std::stoi(row_fields[1]);
+                court = new Cricket(courtNumber);
                 break;
             }
 
@@ -195,11 +175,7 @@ string Court::saveFile()
     string output = courtName;
     output.push_back(',');
     output += to_string(courtNumber);
-
-    if(currState != RESERVED)   return output;
-
-    output.push_back(',');
-    output += bookedBy;
+    return output;
 }
 void saveCourtData(const std::string &filename)
 {
@@ -213,12 +189,91 @@ void saveCourtData(const std::string &filename)
     }
 
     for (auto &court : courts)
-        file << court -> saveFile() << std::endl;
+        file << court->saveFile() << std::endl;
 
     file.close();
     std::cerr << "CSV file created and court data written successfully." << std::endl;
 
     debug(courts);
     cerr << endl;
+    return;
+}
+
+// Load bookings from file
+void readBookings(const std::string &filename)
+{
+    std::ifstream file(filename);
+    std::string line;
+
+    if (!file.is_open())
+    {
+        std::cerr << "No existing bookings file found. Starting fresh." << std::endl;
+        return;
+    }
+
+    while (std::getline(file, line))
+    {
+        if (line.empty()) continue;
+        
+        std::stringstream ss(line);
+        std::string courtName, courtNumStr, date, hourStr, username;
+        
+        if (!std::getline(ss, courtName, ','))      continue;
+        if (!std::getline(ss, courtNumStr, ','))    continue;
+        if (!std::getline(ss, date, ','))           continue;
+        if (!std::getline(ss, hourStr, ','))        continue;
+        if (!std::getline(ss, username, ','))       continue;
+        
+        int hour = std::stoi(hourStr);
+        
+        // Find matching court
+        for (auto &court : courts)
+        {
+            if (court->saveFile() == courtName + "," + courtNumStr)
+            {
+                court->bookSlot(date, hour, username);
+                break;
+            }
+        }
+    }
+
+    file.close();
+    std::cerr << "Bookings loaded successfully." << std::endl;
+    return;
+}
+
+// Save bookings
+void saveBookings(const std::string &filename)
+{
+    std::ofstream file;
+    file.open(filename);
+
+    if (!file.is_open())
+    {
+        std::cerr << "Error: Could not open bookings file for writing." << std::endl;
+        return;
+    }
+
+    // Format: CourtName,CourtNumber,Date,Hour,Username
+    for (int i = 0; i < (int)courts.size(); i++)
+    {
+        const auto &bookingsMap = courts[i]->getBookings();
+        for (const auto &dateEntry : bookingsMap)
+        {
+            for (const auto &hourEntry : dateEntry.second)
+            {
+                if (hourEntry.second.isBooked())
+                {
+                    file << courts[i]->saveFile() << "," 
+                         << dateEntry.first << ","
+                         << hourEntry.first << ","
+                         << hourEntry.second.bookedBy << std::endl;
+                }
+            }
+        }
+    }
+
+    file.close();
+    std::cerr << "Bookings file saved successfully." << std::endl;
     return;
 }

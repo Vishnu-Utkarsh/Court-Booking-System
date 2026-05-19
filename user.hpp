@@ -19,7 +19,7 @@ std::ostream& operator<<(std::ostream& os, userStatus currState)
     return os;
 }
 
-const int bookingLimit = 2;
+const int durationLimit = 1;
 
 class User
 {
