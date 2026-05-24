@@ -40,7 +40,7 @@ std::ostream& operator<<(std::ostream& os, courtStatus currState)
     return os;
 }
 
-const int maxDayLimit = 5; // hrs
+const int durationLimit = 1, maxDayLimit = 5; // hrs
 
 // Time Slot Booking Structure
 class TimeSlot
@@ -60,7 +60,7 @@ public:
     std::string toString() const
     {
         std::stringstream ss;
-        ss << date << " " << std::setfill('0') << std::setw(2) << hour << ":00";
+        ss << date << " \t" << std::setw(2) << std::setfill('0') << hour << ":00 to " << std::setw(2) << std::setfill('0') << hour + durationLimit << ":00";
         return ss.str();
     }
 
@@ -106,20 +106,24 @@ public:
 
     // booking methods
     bool bookSlot(const std::string &date, int hour, const std::string &username);
+    bool cancelSlot(const std::string &date, int hour);
     bool isSlotAvailable(const std::string &date, int hour) const;
     std::vector<TimeSlot> getAvailableSlots(const std::string &date) const;
 
     // save file
     string saveFile();
 
+    // delete expired bookings
+    void deleteExpiredBookings();
+
     // output operator (<<)
     friend std::ostream &operator<<(std::ostream &os, const Court &court)
     {
-        os << court.courtName;
-        if(court.courtNumber)   os << ' ' << court.courtNumber;
+        string suffix = " ";
+        if(court.courtNumber)   suffix += '0' + court.courtNumber;
+        os << std::setw(20) << std::setfill(' ') << court.courtName << suffix;
         os << "\t\t";
         os << "type: " << court.courtType << "\t\t";
-        os << "status: " << (court.checkAvailibility() ? "Available" : "Not Available") << "\t\t";
         return os;
     }
 };
@@ -130,7 +134,7 @@ Court::Court(type courtType, string courtName) : currState(AVAILABLE), courtName
 Court::Court(type courtType, string courtName, int courtNumber) : currState(AVAILABLE), courtName(courtName), courtType(courtType), courtNumber(courtNumber) {}
 
 void Court::switchStatus(courtStatus newState) { currState = newState; }
-bool Court::checkAvailibility() const { return currState == AVAILABLE; }
+// bool Court::checkAvailibility() const { return currState == AVAILABLE; }
 const std::map<std::string, std::map<int, TimeSlot>> &Court::getBookings() const { return bookings; }
 
 bool Court::isSlotAvailable(const std::string &date, int hour) const
@@ -152,10 +156,24 @@ bool Court::bookSlot(const std::string &date, int hour, const std::string &usern
     return true;
 }
 
+bool Court::cancelSlot(const std::string &date, int hour)
+{
+    auto dateIt = bookings.find(date);
+    if (dateIt == bookings.end())
+        return false;
+
+    auto hourIt = dateIt->second.find(hour);
+    if (hourIt == dateIt->second.end() || !hourIt->second.isBooked())
+        return false;
+
+    dateIt->second.erase(hourIt);
+    return true;
+}
+
 std::vector<TimeSlot> Court::getAvailableSlots(const std::string &date) const
 {
     std::vector<TimeSlot> available;
-    for (int hour = 6; hour < 22; hour++) // Operating hours: 6 AM to 11 PM
+    for (int hour = 6; hour < 22; hour++) // Operating hours: 6 AM to 10 PM
     {
         if (isSlotAvailable(date, hour))
             available.push_back(TimeSlot(date, hour));
@@ -230,14 +248,14 @@ Cricket::Cricket(const int number) : Court(GROUND, "Cricket Ground", number) {}
 
 
 void _print(type courtType)
-    {   cerr << courtType; }
+    {   std::cerr << std::setw(15) << courtType; }
 void print(type courtType)
-    {   cout << courtType; }
+    {   std::cout << std::setw(15) << courtType; }
 
 void _print(Court court)
-    {   cerr << endl << court; }
+    {   std::cerr << endl << std::setw(16) << court; }
 void print(Court &court)
-    {   cout << court << endl; }
+    {   std::cout << std::setw(16) << court << endl; }
 
 
 // Utility Functions for date/time operations
@@ -263,12 +281,26 @@ inline std::string getDateOffset(int days)
 inline std::vector<std::string> getNextDays()
 {
     std::vector<std::string> dates;
-    // dates.push_back(getTodayDate());
-    
-    for (int i = 1; i <= maxDayLimit; i++)
+
+    for (int i = 0; i < maxDayLimit; i++)
         dates.push_back(getDateOffset(i));
 
     return dates;
+}
+
+void Court::deleteExpiredBookings()
+{
+    std::string today = getTodayDate();
+    std::vector<std::string> datesToRemove;
+
+    for (auto &dateEntry : bookings)
+    {
+        if (dateEntry.first < today)
+            datesToRemove.push_back(dateEntry.first);
+    }
+
+    for (const auto &date : datesToRemove)
+        bookings.erase(date);
 }
 
 #endif

@@ -6,20 +6,27 @@
 
 // User Status
 enum userStatus
-{   AUTHORIZED, BANNED };
+{
+    AUTHORIZED,
+    BANNED
+};
 
-std::ostream& operator<<(std::ostream& os, userStatus currState)
+std::ostream &operator<<(std::ostream &os, userStatus currState)
 {
     switch (currState)
     {
-        case userStatus::AUTHORIZED:    os << "AUTHORIZED"; break;
-        case userStatus::BANNED:        os << "BANNED";     break;
-        default:                        os << "UNKNOWN";    break;
+    case userStatus::AUTHORIZED:
+        os << "AUTHORIZED";
+        break;
+    case userStatus::BANNED:
+        os << "BANNED";
+        break;
+    default:
+        os << "UNKNOWN";
+        break;
     }
     return os;
 }
-
-const int durationLimit = 1;
 
 class User
 {
@@ -36,7 +43,7 @@ public:
 
     // getters
     std::string getUsername();
-    std::string getPassword();  // remove
+    std::string getPassword(); // remove
     userStatus getStatus();
 
     // authentication
@@ -47,6 +54,7 @@ public:
     void switchStatus(const userStatus newStatus);
     void bookings();
     void book();
+    void cancelBooking();
 
     // save file
     string saveFile();
@@ -62,21 +70,24 @@ public:
 
 // forward declaration
 User::User() {}
-User::User (const std::string &name, const std::string &pass) : username(name), password(pass), currState(AUTHORIZED) {}
-User::User (const std::string &name, const std::string &pass, const userStatus newState) : username(name), password(pass), currState(newState) {}
+User::User(const std::string &name, const std::string &pass) : username(name), password(pass), currState(AUTHORIZED) {}
+User::User(const std::string &name, const std::string &pass, const userStatus newState) : username(name), password(pass), currState(newState) {}
 
 std::string User::getUsername() { return username; }
-std::string User::getPassword() { return password; }    // remove
+std::string User::getPassword() { return password; } // remove
 userStatus User::getStatus() { return currState; }
 
-bool User::checkPassword(const std::string &password) { return password == this -> password; }
+bool User::checkPassword(const std::string &password) { return password == this->password; }
 
 void User::switchStatus(const userStatus newStatus) { currState = newStatus; }
 
-
 void _print(User &user)
-    {   cerr << user.getUsername() << " : " << user.getPassword() << " - " << boolalpha << user.getStatus(); }
+{
+    cerr << user.getUsername() << " : " << user.getPassword() << " - " << boolalpha << user.getStatus();
+}
 void print(User user)
-    {   cout << user << endl; }
+{
+    cout << user << endl;
+}
 
 #endif

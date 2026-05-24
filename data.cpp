@@ -242,6 +242,14 @@ void readBookings(const std::string &filename)
     return;
 }
 
+// Expired bookings
+void deleteExpiredBookings()
+{
+    for (auto &court : courts)
+        court -> deleteExpiredBookings();
+    std::cerr << "Expired bookings deleted successfully." << std::endl;
+}
+
 // Save bookings
 void saveBookings(const std::string &filename)
 {
@@ -262,13 +270,13 @@ void saveBookings(const std::string &filename)
         {
             for (const auto &hourEntry : dateEntry.second)
             {
-                if (hourEntry.second.isBooked())
-                {
-                    file << courts[i]->saveFile() << "," 
-                         << dateEntry.first << ","
-                         << hourEntry.first << ","
-                         << hourEntry.second.bookedBy << std::endl;
-                }
+                if (! hourEntry.second.isBooked())
+                    continue;
+
+                file << courts[i] -> saveFile() << "," 
+                        << dateEntry.first << ","
+                        << hourEntry.first << ","
+                        << hourEntry.second.bookedBy << std::endl;
             }
         }
     }

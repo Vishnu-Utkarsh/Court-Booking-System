@@ -71,6 +71,7 @@ int main()
     readUserData("userData.csv");
     readCourtData("courtData.csv");
     readBookings("bookings.csv");
+    deleteExpiredBookings();
     std::cerr << std::endl;
 
     operate();
