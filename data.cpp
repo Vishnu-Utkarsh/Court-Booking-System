@@ -6,21 +6,6 @@
 #include <sstream>
 #include <fstream>
 
-// show data
-void displayUserData()
-{
-    cout << "Username Status" << endl;
-    for(auto &data : users)
-        print(data.second);
-}
-
-void displayCourtData()
-{
-    cout << "Court Status" << endl;
-    for(auto &data : courts)
-        print(*data);
-}
-
 // read from CSV file
 void readUserData(const std::string &filename)
 {
@@ -54,7 +39,7 @@ void readUserData(const std::string &filename)
     }
 
     file.close();
-    std::cerr << "CSV file imported and user data readed successfully." << std::endl;
+    std::cerr << "CSV file imported and user data readed." << std::endl;
     return;
 }
 
@@ -90,36 +75,36 @@ void readCourtData(const std::string &filename)
         {
             case 1:
             {
-                int courtNumber = std::stoi(row_fields[1]);
-                court = new Badminton(courtNumber);
+                int courtNumber = std::stoi(row_fields[1]), currState = stoi(row_fields[2]);
+                court = new Badminton(courtNumber, (courtStatus) currState);
                 break;
             }
 
             case 2:
             {
-                int courtNumber = std::stoi(row_fields[1]);
-                court = new Basketball(courtNumber);
+                int courtNumber = std::stoi(row_fields[1]), currState = stoi(row_fields[2]);
+                court = new Basketball(courtNumber, (courtStatus) currState);
                 break;
             }
         
             case 3:
             {
-                int courtNumber = std::stoi(row_fields[1]);
-                court = new Volleyball(courtNumber);
+                int courtNumber = std::stoi(row_fields[1]), currState = stoi(row_fields[2]);
+                court = new Volleyball(courtNumber, (courtStatus) currState);
                 break;
             }
         
             case 4:
             {
-                int courtNumber = std::stoi(row_fields[1]);
-                court = new Football(courtNumber);
+                int courtNumber = std::stoi(row_fields[1]), currState = stoi(row_fields[2]);
+                court = new Football(courtNumber, (courtStatus) currState);
                 break;
             }
         
             case 5:
             {
-                int courtNumber = std::stoi(row_fields[1]);
-                court = new Cricket(courtNumber);
+                int courtNumber = std::stoi(row_fields[1]), currState = stoi(row_fields[2]);
+                court = new Cricket(courtNumber, (courtStatus) currState);
                 break;
             }
 
@@ -129,7 +114,7 @@ void readCourtData(const std::string &filename)
     }
 
     file.close();
-    std::cerr << "CSV file imported and court data readed successfully." << std::endl;
+    std::cerr << "CSV file imported and court data readed." << std::endl;
     return;
 }
 
@@ -163,10 +148,10 @@ void saveUserData(const std::string &filename)
         file << user.second.saveFile() << std::endl;
 
     file.close();
-    std::cerr << "CSV file created and user data written successfully." << std::endl;
+    std::cerr << "CSV file created and user data written." << std::endl;
 
     debug(users);
-    cerr << endl;
+    std::cerr << std::endl;
     return;
 }
 
@@ -175,6 +160,13 @@ string Court::saveFile()
     string output = courtName;
     output.push_back(',');
     output += to_string(courtNumber);
+    output.push_back(',');
+
+    switch(currState)
+    {
+        case AVAILABLE:     output.push_back('0');  break;
+        case MAINTAINANCE:  output.push_back('1');  break;
+    }
     return output;
 }
 void saveCourtData(const std::string &filename)
@@ -189,13 +181,13 @@ void saveCourtData(const std::string &filename)
     }
 
     for (auto &court : courts)
-        file << court->saveFile() << std::endl;
+        file << court -> saveFile() << std::endl;
 
     file.close();
-    std::cerr << "CSV file created and court data written successfully." << std::endl;
+    std::cerr << "CSV file created and court data written." << std::endl;
 
-    debug(courts);
-    cerr << endl;
+    for (auto &court : courts)
+        _print(*court);
     return;
 }
 
@@ -229,16 +221,20 @@ void readBookings(const std::string &filename)
         // Find matching court
         for (auto &court : courts)
         {
-            if (court->saveFile() == courtName + "," + courtNumStr)
-            {
-                court->bookSlot(date, hour, username);
-                break;
-            }
+            string courtId = court -> saveFile();
+            while(courtId.back() != ',')    courtId.pop_back();
+            courtId.pop_back();
+
+            if (courtId != courtName + "," + courtNumStr)
+                continue;
+
+            court->bookSlot(date, hour, username);
+            break;
         }
     }
 
     file.close();
-    std::cerr << "Bookings loaded successfully." << std::endl;
+    std::cerr << "Bookings loaded." << std::endl;
     return;
 }
 
@@ -247,7 +243,7 @@ void deleteExpiredBookings()
 {
     for (auto &court : courts)
         court -> deleteExpiredBookings();
-    std::cerr << "Expired bookings deleted successfully." << std::endl;
+    std::cerr << "Expired bookings deleted." << std::endl;
 }
 
 // Save bookings
@@ -273,15 +269,19 @@ void saveBookings(const std::string &filename)
                 if (! hourEntry.second.isBooked())
                     continue;
 
-                file << courts[i] -> saveFile() << "," 
-                        << dateEntry.first << ","
-                        << hourEntry.first << ","
-                        << hourEntry.second.bookedBy << std::endl;
+                string courtId = courts[i] -> saveFile();
+                while(courtId.back() != ',')    courtId.pop_back();
+                courtId.pop_back();
+
+                file << courtId << "," 
+                     << dateEntry.first << ","
+                     << hourEntry.first << ","
+                     << hourEntry.second.bookedBy << std::endl;
             }
         }
     }
 
     file.close();
-    std::cerr << "Bookings file saved successfully." << std::endl;
+    std::cerr << "Bookings file saved." << std::endl;
     return;
 }

@@ -4,9 +4,9 @@ A Court Booking System is a software application designed to manage reservations
 ## Key Features
 
 ### 🗓️ 2-Day Booking Availability System
-- **Real-time Availability**: View available time slots for today and tomorrow
-- **Hourly Time Slots**: Courts can be booked in 1-hour increments (6 AM to 11 PM)
-- **Automatic Duration**: Each booking is for 3 hours by default
+- **Real-time Availability**: View available time slots for today and for next few days
+- **Hourly Time Slots**: Courts can be booked in 1-hour increments (6 AM to 10 PM)
+- **Automatic Duration**: Each booking is for 1 hours by default
 - **Multiple Bookings**: Users can book different courts at different times
 - **Visual Slot Selection**: Easy-to-use interface for selecting dates and times
 
@@ -46,7 +46,8 @@ Each court type can have multiple numbered instances.
 2. View all your active bookings with:
    - Court name and number
    - Date and time
-   - Duration (3 hours default)
+   - Duration (1 hour default)
+3. Option to cancel bookings (future enhancement)
 
 ## Technical Architecture
 
@@ -60,18 +61,11 @@ Each court type can have multiple numbered instances.
 - **Court Class**: Base class with multi-day booking support
   - Tracks bookings in a map: `date → hour → TimeSlot`
   - Methods for checking and making bookings
-- **Derived Classes**: Badminton, Basketball, Volleyball, Football, Cricket
-
-#### Booking Methods
-```cpp
-bool bookSlot(const string &date, int hour, const string &username);
-bool isSlotAvailable(const string &date, int hour) const;
-vector<TimeSlot> getAvailableSlots(const string &date) const;
-```
+- **Derived Classes**: Badminton, Basketball, Volleyball, Football, Cricket courts with specific attributes
 
 #### User Interface (`operation.cpp`)
 - **User::book()**: Interactive booking interface with:
-  - 2-day availability display
+  - 5-day availability display
   - Date selection
   - Time slot selection with visual formatting
   - Booking confirmation
@@ -79,8 +73,8 @@ vector<TimeSlot> getAvailableSlots(const string &date) const;
 
 #### Utility Functions (`court.hpp`)
 - `getTodayDate()`: Get today's date in YYYY-MM-DD format
-- `getDateOffset(days)`: Get date N days in the future
-- `getNextTwoDays()`: Get array of next 2 dates for availability
+- `getDateOffset(days)`: Get date 5 days in the future
+- `getNextFiveDays()`: Get array of next 5 dates for availability
 
 ### Data Persistence
 
@@ -99,15 +93,16 @@ vector<TimeSlot> getAvailableSlots(const string &date) const;
 - `saveUserData()`: Persist users to CSV
 - `saveCourtData()`: Persist courts to CSV
 - `saveBookings()`: Persist bookings to CSV
+- `updateBooking()`: Update booking status in CSV
 
 ## Operating Hours
-- **Daily Booking Window**: 6:00 AM to 11:00 PM
-- **Booking Duration**: 3 hours per slot
-- **Availability Window**: Current day + 1 day (48-hour rolling window)
+- **Daily Booking Window**: 6:00 AM to 10:00 PM
+- **Booking Duration**: 1 hours per slot
+- **Availability Window**: Current day + 5 days (120-hour rolling window)
 
 ## System Constants
 ```cpp
-const int durationLimit = 3;     // Hours per booking
+const int durationLimit = 1;     // Hours per booking
 const int bookingLimit = 2;      // Max bookings per user
 ```
 

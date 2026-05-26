@@ -8,10 +8,12 @@
 #include <sstream>
 #include <map>
 
+// -------------------- Structure Definition --------------------
+
+const int durationLimit = 1, maxDayLimit = 5; // hrs
 // Court Type
 enum type
 {   INDOOR, OUTDOOR, GROUND };
-
 std::ostream& operator<<(std::ostream& os, type courtType)
 {
     switch (courtType)
@@ -26,21 +28,17 @@ std::ostream& operator<<(std::ostream& os, type courtType)
 
 // Court Status
 enum courtStatus
-{   AVAILABLE, RESERVED, Maintainace };
-
+{   AVAILABLE, MAINTAINANCE };
 std::ostream& operator<<(std::ostream& os, courtStatus currState)
 {
     switch (currState)
     {
-        case courtStatus::AVAILABLE:    os << "Available";          break;
-        // case courtStatus::RESERVED:     os << "RESERVED";           break;
-        case courtStatus::Maintainace:  os << "under Maintainace";  break;
-        default:                        os << "UNKNOWN";            break;
+        case courtStatus::AVAILABLE:    os << "Available";      break;
+        case courtStatus::MAINTAINANCE: os << "Maintainance";   break;
+        default:                        os << "UNKNOWN";        break;
     }
     return os;
 }
-
-const int durationLimit = 1, maxDayLimit = 5; // hrs
 
 // Time Slot Booking Structure
 class TimeSlot
@@ -54,7 +52,7 @@ public:
     TimeSlot(const std::string &d, int h) : date(d), hour(h), bookedBy("") {}
     TimeSlot(const std::string &d, int h, const std::string &user) : date(d), hour(h), bookedBy(user) {}
 
-    bool isBooked() const { return !bookedBy.empty(); }
+    bool isBooked() const { return ! bookedBy.empty(); }
 
     // Change Format
     std::string toString() const
@@ -90,25 +88,24 @@ private:
     type courtType;
     std::map<std::string, std::map<int, TimeSlot>> bookings; // date -> hour -> TimeSlot
 
-protected:
-    void switchStatus(courtStatus newState);
-    bool checkAvailibility() const;
-
 public:
     // constructor
     Court();
-    Court(type courtType, string courtName);
-    Court(type courtType, string courtName, int courtNumber);
+    Court(type courtType, string courtName, courtStatus currState);
+    Court(type courtType, string courtName, int courtNumber, courtStatus currState);
 
     // getters
-    std::string getBookedBy() const;
     const std::map<std::string, std::map<int, TimeSlot>> &getBookings() const;
+    courtStatus getStatus() const;
+    std::string getCourtName() const;
+    int getCourtNumber() const;
 
     // booking methods
     bool bookSlot(const std::string &date, int hour, const std::string &username);
     bool cancelSlot(const std::string &date, int hour);
     bool isSlotAvailable(const std::string &date, int hour) const;
     std::vector<TimeSlot> getAvailableSlots(const std::string &date) const;
+    void switchStatus(courtStatus newState);
 
     // save file
     string saveFile();
@@ -124,17 +121,20 @@ public:
         os << std::setw(20) << std::setfill(' ') << court.courtName << suffix;
         os << "\t\t";
         os << "type: " << court.courtType << "\t\t";
+        os << "status: " << court.currState << "\t\t";
         return os;
     }
 };
 
 // forward declaration
 Court::Court() : currState(AVAILABLE) {}
-Court::Court(type courtType, string courtName) : currState(AVAILABLE), courtName(courtName), courtType(courtType) {}
-Court::Court(type courtType, string courtName, int courtNumber) : currState(AVAILABLE), courtName(courtName), courtType(courtType), courtNumber(courtNumber) {}
+Court::Court(type courtType, string courtName, courtStatus currState) : currState(currState), courtName(courtName), courtType(courtType) {}
+Court::Court(type courtType, string courtName, int courtNumber, courtStatus currState) : currState(currState), courtName(courtName), courtType(courtType), courtNumber(courtNumber) {}
 
 void Court::switchStatus(courtStatus newState) { currState = newState; }
-// bool Court::checkAvailibility() const { return currState == AVAILABLE; }
+courtStatus Court::getStatus() const { return currState; }
+std::string Court::getCourtName() const { return courtName + ' ' + to_string(courtNumber); }
+int Court::getCourtNumber() const { return courtNumber; }
 const std::map<std::string, std::map<int, TimeSlot>> &Court::getBookings() const { return bookings; }
 
 bool Court::isSlotAvailable(const std::string &date, int hour) const
@@ -143,8 +143,8 @@ bool Court::isSlotAvailable(const std::string &date, int hour) const
     if (dateIt == bookings.end())
         return true;
 
-    auto hourIt = dateIt->second.find(hour);
-    return hourIt == dateIt->second.end() || !hourIt->second.isBooked();
+    auto hourIt = dateIt -> second.find(hour);
+    return hourIt == dateIt->second.end() || ! hourIt -> second.isBooked();
 }
 
 bool Court::bookSlot(const std::string &date, int hour, const std::string &username)
@@ -181,71 +181,76 @@ std::vector<TimeSlot> Court::getAvailableSlots(const std::string &date) const
     return available;
 }
 
+
+// -------------------- Derived Classes --------------------
+
 // Derived Class Badminton
 class Badminton : public Court
 {
 public:
     // constructor
-    Badminton();
-    Badminton(const int number);
+    Badminton(courtStatus currState);
+    Badminton(const int number, courtStatus currState);
 };
 
 // forward declaration
-Badminton::Badminton() : Court(INDOOR, "Badminton Court") {}
-Badminton::Badminton(const int number) : Court(INDOOR, "Badminton Court", number) {}
+Badminton::Badminton(courtStatus currState) : Court(INDOOR, "Badminton Court", currState) {}
+Badminton::Badminton(const int number, courtStatus currState) : Court(INDOOR, "Badminton Court", number, currState) {}
 
 // Derived Class Basketball
 class Basketball : public Court
 {
 public:
     // constructor
-    Basketball();
-    Basketball(const int number);
+    Basketball(courtStatus currState);
+    Basketball(const int number, courtStatus currState);
 };
 
 // forward declaration
-Basketball::Basketball() : Court(OUTDOOR, "Basketball Court") {}
-Basketball::Basketball(const int number) : Court(OUTDOOR, "Basketball Court", number) {}
+Basketball::Basketball(courtStatus currState) : Court(OUTDOOR, "Basketball Court", currState) {}
+Basketball::Basketball(const int number, courtStatus currState) : Court(OUTDOOR, "Basketball Court", number, currState) {}
 
 // Derived Class Volleyball
 class Volleyball : public Court
 {
 public:
     // constructor
-    Volleyball();
-    Volleyball(const int number);
+    Volleyball(courtStatus currState);
+    Volleyball(const int number, courtStatus currState);
 };
 
 // forward declaration
-Volleyball::Volleyball() : Court(INDOOR, "Volleyball Court") {}
-Volleyball::Volleyball(const int number) : Court(INDOOR, "Volleyball Court", number) {}
+Volleyball::Volleyball(courtStatus currState) : Court(INDOOR, "Volleyball Court", currState) {}
+Volleyball::Volleyball(const int number, courtStatus currState) : Court(INDOOR, "Volleyball Court", number, currState) {}
 
 // Derived Class Football
 class Football : public Court
 {
 public:
     // constructor
-    Football();
-    Football(const int number);
+    Football(courtStatus currState);
+    Football(const int number, courtStatus currState);
 };
 
 // forward declaration
-Football::Football() : Court(GROUND, "Football Ground") {}
-Football::Football(const int number) : Court(GROUND, "Football Ground", number) {}
+Football::Football(courtStatus currState) : Court(GROUND, "Football Ground", currState) {}
+Football::Football(const int number, courtStatus currState) : Court(GROUND, "Football Ground", number, currState) {}
 
 // Derived Class Cricket
 class Cricket : public Court
 {
 public:
     // constructor
-    Cricket();
-    Cricket(const int number);
+    Cricket(courtStatus currState);
+    Cricket(const int number, courtStatus currState);
 };
 
 // forward declaration
-Cricket::Cricket() : Court(GROUND, "Cricket Ground") {}
-Cricket::Cricket(const int number) : Court(GROUND, "Cricket Ground", number) {}
+Cricket::Cricket(courtStatus currState) : Court(GROUND, "Cricket Ground", currState) {}
+Cricket::Cricket(const int number, courtStatus currState) : Court(GROUND, "Cricket Ground", number, currState) {}
 
+
+// -------------------- Utilities --------------------
 
 void _print(type courtType)
     {   std::cerr << std::setw(15) << courtType; }
@@ -253,9 +258,9 @@ void print(type courtType)
     {   std::cout << std::setw(15) << courtType; }
 
 void _print(Court court)
-    {   std::cerr << endl << std::setw(16) << court; }
+    {   std::cerr << std::setw(16) << court << std::endl; }
 void print(Court &court)
-    {   std::cout << std::setw(16) << court << endl; }
+    {   std::cout << std::setw(16) << court << std::endl; }
 
 
 // Utility Functions for date/time operations
@@ -301,6 +306,14 @@ void Court::deleteExpiredBookings()
 
     for (const auto &date : datesToRemove)
         bookings.erase(date);
+}
+
+inline bool validateDate(const std::string &date)
+{
+    std::istringstream ss(date);
+    std::tm tm = {};
+    ss >> std::get_time(&tm, "%Y-%m-%d");
+    return !ss.fail();
 }
 
 #endif

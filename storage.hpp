@@ -3,6 +3,7 @@
 
 #include "user.hpp"
 #include "court.hpp"
+#include "admin.hpp"
 
 unordered_map<string, User> users;
 vector<Court *> courts;

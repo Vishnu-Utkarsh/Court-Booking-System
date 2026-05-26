@@ -6,24 +6,15 @@
 
 // User Status
 enum userStatus
-{
-    AUTHORIZED,
-    BANNED
-};
+{   AUTHORIZED, BANNED };
 
 std::ostream &operator<<(std::ostream &os, userStatus currState)
 {
     switch (currState)
     {
-    case userStatus::AUTHORIZED:
-        os << "AUTHORIZED";
-        break;
-    case userStatus::BANNED:
-        os << "BANNED";
-        break;
-    default:
-        os << "UNKNOWN";
-        break;
+    case userStatus::AUTHORIZED:    os << "AUTHORIZED"; break;
+    case userStatus::BANNED:        os << "BANNED";     break;
+    default:    os << "UNKNOWN";    break;
     }
     return os;
 }
@@ -62,7 +53,7 @@ public:
     // output operator (<<)
     friend std::ostream &operator<<(std::ostream &os, const User &user)
     {
-        os << "username: " << user.username << "\t\t";
+        os << "username: " << setw(20) << user.username << "\t\t";
         os << "userStatus: " << user.currState << "\t\t";
         return os;
     }

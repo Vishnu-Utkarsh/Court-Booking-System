@@ -1,6 +1,45 @@
 #include "Template.hpp"
 #include "storage.hpp"
 
+// Admin Login
+void adminLogin()
+{
+    std::string adminName, adminPassword;
+    std::cout << std::endl;
+    std::cout << "====== ADMIN LOGIN ======" << std::endl;
+    std::cout << "Enter 0 to Back" << std::endl;
+
+    std::cout << std::endl
+              << "Enter admin username: ";
+    std::cin >> adminName;
+
+    if (adminName == "0")
+        return;
+
+    std::cout << std::endl
+              << "Enter admin password: ";
+    std::cin >> adminPassword;
+
+    if (adminPassword == "0")
+        return;
+
+    if(! obj.authenticate(adminName, adminPassword))
+    {
+        std::cout << std::endl
+                  << "Wrong Admin Name or Password !" << std::endl;
+        return;
+    }
+
+    cout << std::endl;
+    #ifdef _WIN32
+        std::system("cls");
+    #else
+        std::system("clear");
+    #endif
+
+    obj.showAdminPanel(adminPassword);
+}
+
 // Create Account
 void createAccount()
 {
@@ -43,6 +82,7 @@ void createAccount()
     User newUser(username, password);
     debug(newUser);
     users[username] = newUser;
+    newUser.Login(password);
 }
 
 // User Login
@@ -143,18 +183,25 @@ void User::bookings()
     return;
 }
 
-// Book court with 2-day availability view
+// Book court availability view
 void User::book()
 {
+    cout << std::endl;
+    #ifdef _WIN32
+        std::system("cls"); // For Windows
+    #else
+        // Assume POSIX (Linux, macOS, etc.)
+        std::system("clear");
+    #endif
+
     std::cout << std::endl;
     std::cout << "====== BOOKING COURT ======" << std::endl;
     std::cout << std::endl;
 
-    // Get next 2 days
     std::vector<std::string> nextDays = getNextDays();
 
     // Display available courts
-    std::cout << "Available Courts:" << std::endl;
+    std::cout << "All Courts:" << std::endl;
     std::cout << "----------------------------------------------------" << std::endl;
 
     for (int i = 0; i < (int)courts.size(); i++)
@@ -162,7 +209,7 @@ void User::book()
 
     std::cout << "----------------------------------------------------" << std::endl;
     std::cout << std::endl
-              << "Select court number (or -1 to cancel): ";
+              << "Select court number which is Available (or -1 to cancel): ";
 
     int courtChoice;
     std::cin >> courtChoice;
@@ -177,6 +224,11 @@ void User::book()
     }
 
     Court *selectedCourt = courts[courtChoice];
+    if(selectedCourt -> getStatus() == MAINTAINANCE)
+    {
+        std::cout << "Court under maintainance. Try another court !" << std::endl;
+        return;
+    }
 
     // Display day availability
     std::cout << std::endl;
@@ -242,7 +294,7 @@ void User::book()
     }
 
     // Book the slot
-    if (selectedCourt->bookSlot(selectedDate, availableSlots[slotChoice].hour, username))
+    if (selectedCourt -> bookSlot(selectedDate, availableSlots[slotChoice].hour, username))
     {
         std::cerr << std::endl;
         std::cerr << " Booked -> " << username << ' ';
@@ -265,9 +317,7 @@ void User::book()
         std::cin.get();
     }
     else
-    {
         std::cout << "Failed to book slot. Please try again." << std::endl;
-    }
 }
 
 // Cancel user bookings
@@ -340,7 +390,7 @@ void User::cancelBooking()
     {
         courtToCancel -> cancelSlot(bookingToCancel.date, bookingToCancel.hour);
         std::cout << std::endl;
-        std::cout << "Booking cancelled successfully!" << std::endl;
+        std::cout << "Booking cancelled!" << std::endl;
 
         std::cerr << std::endl;
         std::cerr << " Cancelled -> " << username << ' ';
@@ -360,6 +410,7 @@ void User::cancelBooking()
     std::cin.get();
 }
 
+// Operate during LoggedIn
 void User::Login(const std::string &password)
 {
     if (password != this->password)
@@ -370,12 +421,6 @@ void User::Login(const std::string &password)
     while (true)
     {
         cout << std::endl;
-        #ifdef _WIN32
-            std::system("cls"); // For Windows
-        #else
-            // Assume POSIX (Linux, macOS, etc.)
-            std::system("clear");
-        #endif
 
         if (currState == BANNED)
         {
