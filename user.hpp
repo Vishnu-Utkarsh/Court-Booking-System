@@ -1,8 +1,7 @@
 #ifndef USER
 #define USER
 
-#include "Template.hpp"
-#include "court.hpp"
+#include "storage.hpp"
 
 // User Status
 enum userStatus
@@ -24,7 +23,6 @@ class User
 private:
     userStatus currState;
     std::string username, password;
-    vector<Court *> booked;
 
 public:
     // constructor
@@ -48,12 +46,12 @@ public:
     void cancelBooking();
 
     // save file
-    string saveFile();
+    std::string saveFile();
 
     // output operator (<<)
     friend std::ostream &operator<<(std::ostream &os, const User &user)
     {
-        os << "username: " << setw(20) << user.username << "\t\t";
+        os << "username: " << std::setw(20) << user.username << "\t\t";
         os << "userStatus: " << user.currState << "\t\t";
         return os;
     }
@@ -71,14 +69,5 @@ userStatus User::getStatus() { return currState; }
 bool User::checkPassword(const std::string &password) { return password == this->password; }
 
 void User::switchStatus(const userStatus newStatus) { currState = newStatus; }
-
-void _print(User &user)
-{
-    cerr << user.getUsername() << " : " << user.getPassword() << " - " << boolalpha << user.getStatus();
-}
-void print(User user)
-{
-    cout << user << endl;
-}
 
 #endif

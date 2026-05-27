@@ -2,7 +2,6 @@
 #include <iomanip>
 #include <string>
 
-#include "Template.hpp"
 #include "admin.hpp"
 #include "data.cpp"
 #include "operation.cpp"
@@ -11,7 +10,7 @@ void operate()
 {
     while(true)
     {
-        cout << std::endl;
+        std::cout << std::endl;
         #ifdef _WIN32
             std::system("cls"); // For Windows
         #else
@@ -29,7 +28,7 @@ void operate()
         std::cout << std::endl;
 
         int task;
-        cin >> task;
+        std::cin >> task;
 
         switch(task)
         {
@@ -39,7 +38,6 @@ void operate()
 
             case 0:
             {
-                std::cerr << std::endl;
                 saveUserData("userData.csv");
                 saveCourtData("courtData.csv");
                 saveBookings("bookings.csv");
@@ -60,19 +58,10 @@ void operate()
 
 int main()
 {
-    fastio;
-    
-    #ifndef ONLINE_JUDGE
-    freopen("input.txt", "r", stdin);
-    freopen("output.txt", "w", stdout);
-    freopen("error.txt", "w", stderr);
-    #endif
-
     readUserData("userData.csv");
     readCourtData("courtData.csv");
     readBookings("bookings.csv");
-    deleteExpiredBookings();
-    std::cerr << std::endl;
 
+    deleteExpiredBookings();
     operate();
 }

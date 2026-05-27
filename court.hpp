@@ -1,16 +1,15 @@
 #ifndef COURT
 #define COURT
 
-#include "Template.hpp"
+#include "storage.hpp"
+
 #include <ostream>
 #include <chrono>
 #include <iomanip>
 #include <sstream>
-#include <map>
 
 // -------------------- Structure Definition --------------------
 
-const int durationLimit = 1, maxDayLimit = 5; // hrs
 // Court Type
 enum type
 {   INDOOR, OUTDOOR, GROUND };
@@ -28,12 +27,13 @@ std::ostream& operator<<(std::ostream& os, type courtType)
 
 // Court Status
 enum courtStatus
-{   AVAILABLE, MAINTAINANCE };
+{   AVAILABLE, RESERVED, MAINTAINANCE };
 std::ostream& operator<<(std::ostream& os, courtStatus currState)
 {
     switch (currState)
     {
         case courtStatus::AVAILABLE:    os << "Available";      break;
+        case courtStatus::RESERVED:     os << "Reserved";       break;
         case courtStatus::MAINTAINANCE: os << "Maintainance";   break;
         default:                        os << "UNKNOWN";        break;
     }
@@ -84,15 +84,15 @@ class Court
 private:
     courtStatus currState;
     int courtNumber = 0;
-    string courtName;
+    std::string courtName;
     type courtType;
     std::map<std::string, std::map<int, TimeSlot>> bookings; // date -> hour -> TimeSlot
 
 public:
     // constructor
     Court();
-    Court(type courtType, string courtName, courtStatus currState);
-    Court(type courtType, string courtName, int courtNumber, courtStatus currState);
+    Court(type courtType, std::string courtName, courtStatus currState);
+    Court(type courtType, std::string courtName, int courtNumber, courtStatus currState);
 
     // getters
     const std::map<std::string, std::map<int, TimeSlot>> &getBookings() const;
@@ -108,7 +108,7 @@ public:
     void switchStatus(courtStatus newState);
 
     // save file
-    string saveFile();
+    std::string saveFile();
 
     // delete expired bookings
     void deleteExpiredBookings();
@@ -116,7 +116,7 @@ public:
     // output operator (<<)
     friend std::ostream &operator<<(std::ostream &os, const Court &court)
     {
-        string suffix = " ";
+        std::string suffix = " ";
         if(court.courtNumber)   suffix += '0' + court.courtNumber;
         os << std::setw(20) << std::setfill(' ') << court.courtName << suffix;
         os << "\t\t";
@@ -128,12 +128,12 @@ public:
 
 // forward declaration
 Court::Court() : currState(AVAILABLE) {}
-Court::Court(type courtType, string courtName, courtStatus currState) : currState(currState), courtName(courtName), courtType(courtType) {}
-Court::Court(type courtType, string courtName, int courtNumber, courtStatus currState) : currState(currState), courtName(courtName), courtType(courtType), courtNumber(courtNumber) {}
+Court::Court(type courtType, std::string courtName, courtStatus currState) : currState(currState), courtName(courtName), courtType(courtType) {}
+Court::Court(type courtType, std::string courtName, int courtNumber, courtStatus currState) : currState(currState), courtName(courtName), courtType(courtType), courtNumber(courtNumber) {}
 
 void Court::switchStatus(courtStatus newState) { currState = newState; }
 courtStatus Court::getStatus() const { return currState; }
-std::string Court::getCourtName() const { return courtName + ' ' + to_string(courtNumber); }
+std::string Court::getCourtName() const { return courtName + ' ' + std::to_string(courtNumber); }
 int Court::getCourtNumber() const { return courtNumber; }
 const std::map<std::string, std::map<int, TimeSlot>> &Court::getBookings() const { return bookings; }
 
@@ -252,13 +252,8 @@ Cricket::Cricket(const int number, courtStatus currState) : Court(GROUND, "Crick
 
 // -------------------- Utilities --------------------
 
-void _print(type courtType)
-    {   std::cerr << std::setw(15) << courtType; }
 void print(type courtType)
     {   std::cout << std::setw(15) << courtType; }
-
-void _print(Court court)
-    {   std::cerr << std::setw(16) << court << std::endl; }
 void print(Court &court)
     {   std::cout << std::setw(16) << court << std::endl; }
 

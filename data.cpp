@@ -1,8 +1,5 @@
-#include "Template.hpp"
 #include "storage.hpp"
 
-#include <vector>
-#include <iostream>
 #include <sstream>
 #include <fstream>
 
@@ -33,13 +30,12 @@ void readUserData(const std::string &filename)
             continue;
 
         int state = std::stoi(row_fields[2]);
-        string username = row_fields[0], password = row_fields[1];
+        std::string username = row_fields[0], password = row_fields[1];
 
         users[username] = User(username, password, (userStatus) state);
     }
 
     file.close();
-    std::cerr << "CSV file imported and user data readed." << std::endl;
     return;
 }
 
@@ -107,21 +103,18 @@ void readCourtData(const std::string &filename)
                 court = new Cricket(courtNumber, (courtStatus) currState);
                 break;
             }
-
-            default:    std::cerr << "Currupted File !" << std::endl;   return;
         }
         courts.push_back(court);
     }
 
     file.close();
-    std::cerr << "CSV file imported and court data readed." << std::endl;
     return;
 }
 
 // save to CSV file
-string User::saveFile()
+std::string User::saveFile()
 {
-    string output = username;
+    std::string output = username;
     output.push_back(',');
     output += password;
     output.push_back(',');
@@ -148,24 +141,21 @@ void saveUserData(const std::string &filename)
         file << user.second.saveFile() << std::endl;
 
     file.close();
-    std::cerr << "CSV file created and user data written." << std::endl;
-
-    debug(users);
-    std::cerr << std::endl;
     return;
 }
 
-string Court::saveFile()
+std::string Court::saveFile()
 {
-    string output = courtName;
+    std::string output = courtName;
     output.push_back(',');
-    output += to_string(courtNumber);
+    output += std::to_string(courtNumber);
     output.push_back(',');
 
     switch(currState)
     {
         case AVAILABLE:     output.push_back('0');  break;
-        case MAINTAINANCE:  output.push_back('1');  break;
+        case RESERVED:      output.push_back('1');  break;
+        case MAINTAINANCE:  output.push_back('2');  break;
     }
     return output;
 }
@@ -184,10 +174,6 @@ void saveCourtData(const std::string &filename)
         file << court -> saveFile() << std::endl;
 
     file.close();
-    std::cerr << "CSV file created and court data written." << std::endl;
-
-    for (auto &court : courts)
-        _print(*court);
     return;
 }
 
@@ -221,7 +207,7 @@ void readBookings(const std::string &filename)
         // Find matching court
         for (auto &court : courts)
         {
-            string courtId = court -> saveFile();
+            std::string courtId = court -> saveFile();
             while(courtId.back() != ',')    courtId.pop_back();
             courtId.pop_back();
 
@@ -234,7 +220,6 @@ void readBookings(const std::string &filename)
     }
 
     file.close();
-    std::cerr << "Bookings loaded." << std::endl;
     return;
 }
 
@@ -243,7 +228,6 @@ void deleteExpiredBookings()
 {
     for (auto &court : courts)
         court -> deleteExpiredBookings();
-    std::cerr << "Expired bookings deleted." << std::endl;
 }
 
 // Save bookings
@@ -269,7 +253,7 @@ void saveBookings(const std::string &filename)
                 if (! hourEntry.second.isBooked())
                     continue;
 
-                string courtId = courts[i] -> saveFile();
+                std::string courtId = courts[i] -> saveFile();
                 while(courtId.back() != ',')    courtId.pop_back();
                 courtId.pop_back();
 
@@ -282,6 +266,5 @@ void saveBookings(const std::string &filename)
     }
 
     file.close();
-    std::cerr << "Bookings file saved." << std::endl;
     return;
 }
