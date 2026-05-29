@@ -6,7 +6,6 @@
 // User Status
 enum userStatus
 {   AUTHORIZED, BANNED };
-
 std::ostream &operator<<(std::ostream &os, userStatus currState)
 {
     switch (currState)
@@ -41,7 +40,7 @@ public:
 
     // switch userStatus
     void switchStatus(const userStatus newStatus);
-    void bookings();
+    void showBookings();
     void book();
     void cancelBooking();
 

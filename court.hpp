@@ -98,7 +98,6 @@ public:
     const std::map<std::string, std::map<int, TimeSlot>> &getBookings() const;
     courtStatus getStatus() const;
     std::string getCourtName() const;
-    int getCourtNumber() const;
 
     // booking methods
     bool bookSlot(const std::string &date, int hour, const std::string &username);
@@ -116,9 +115,7 @@ public:
     // output operator (<<)
     friend std::ostream &operator<<(std::ostream &os, const Court &court)
     {
-        std::string suffix = " ";
-        if(court.courtNumber)   suffix += '0' + court.courtNumber;
-        os << std::setw(20) << std::setfill(' ') << court.courtName << suffix;
+        os << std::setw(20) << std::setfill(' ') << court.getCourtName();
         os << "\t\t";
         os << "type: " << court.courtType << "\t\t";
         os << "status: " << court.currState << "\t\t";
@@ -133,8 +130,7 @@ Court::Court(type courtType, std::string courtName, int courtNumber, courtStatus
 
 void Court::switchStatus(courtStatus newState) { currState = newState; }
 courtStatus Court::getStatus() const { return currState; }
-std::string Court::getCourtName() const { return courtName + ' ' + std::to_string(courtNumber); }
-int Court::getCourtNumber() const { return courtNumber; }
+std::string Court::getCourtName() const { return courtName + " " + std::to_string(courtNumber); }
 const std::map<std::string, std::map<int, TimeSlot>> &Court::getBookings() const { return bookings; }
 
 bool Court::isSlotAvailable(const std::string &date, int hour) const
@@ -195,7 +191,7 @@ public:
 
 // forward declaration
 Badminton::Badminton(courtStatus currState) : Court(INDOOR, "Badminton Court", currState) {}
-Badminton::Badminton(const int number, courtStatus currState) : Court(INDOOR, "Badminton Court", number, currState) {}
+Badminton::Badminton(const int number, courtStatus currState = AVAILABLE) : Court(INDOOR, "Badminton Court", number, currState) {}
 
 // Derived Class Basketball
 class Basketball : public Court
@@ -208,7 +204,7 @@ public:
 
 // forward declaration
 Basketball::Basketball(courtStatus currState) : Court(OUTDOOR, "Basketball Court", currState) {}
-Basketball::Basketball(const int number, courtStatus currState) : Court(OUTDOOR, "Basketball Court", number, currState) {}
+Basketball::Basketball(const int number, courtStatus currState = AVAILABLE) : Court(OUTDOOR, "Basketball Court", number, currState) {}
 
 // Derived Class Volleyball
 class Volleyball : public Court
@@ -221,7 +217,7 @@ public:
 
 // forward declaration
 Volleyball::Volleyball(courtStatus currState) : Court(INDOOR, "Volleyball Court", currState) {}
-Volleyball::Volleyball(const int number, courtStatus currState) : Court(INDOOR, "Volleyball Court", number, currState) {}
+Volleyball::Volleyball(const int number, courtStatus currState = AVAILABLE) : Court(INDOOR, "Volleyball Court", number, currState) {}
 
 // Derived Class Football
 class Football : public Court
@@ -234,7 +230,7 @@ public:
 
 // forward declaration
 Football::Football(courtStatus currState) : Court(GROUND, "Football Ground", currState) {}
-Football::Football(const int number, courtStatus currState) : Court(GROUND, "Football Ground", number, currState) {}
+Football::Football(const int number, courtStatus currState = AVAILABLE) : Court(GROUND, "Football Ground", number, currState) {}
 
 // Derived Class Cricket
 class Cricket : public Court
@@ -247,7 +243,7 @@ public:
 
 // forward declaration
 Cricket::Cricket(courtStatus currState) : Court(GROUND, "Cricket Ground", currState) {}
-Cricket::Cricket(const int number, courtStatus currState) : Court(GROUND, "Cricket Ground", number, currState) {}
+Cricket::Cricket(const int number, courtStatus currState = AVAILABLE) : Court(GROUND, "Cricket Ground", number, currState) {}
 
 
 // -------------------- Utilities --------------------
@@ -257,8 +253,6 @@ void print(type courtType)
 void print(Court &court)
     {   std::cout << std::setw(16) << court << std::endl; }
 
-
-// Utility Functions for date/time operations
 inline std::string getTodayDate()
 {
     auto now = std::chrono::system_clock::now();

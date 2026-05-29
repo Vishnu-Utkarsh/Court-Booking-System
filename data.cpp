@@ -3,7 +3,8 @@
 #include <sstream>
 #include <fstream>
 
-// read from CSV file
+// -------------------- Read --------------------
+// (from CSV file)
 void readUserData(const std::string &filename)
 {
     std::ifstream file(filename);
@@ -111,7 +112,53 @@ void readCourtData(const std::string &filename)
     return;
 }
 
-// save to CSV file
+void readBookings(const std::string &filename)
+{
+    std::ifstream file(filename);
+    std::string line;
+
+    if (!file.is_open())
+    {
+        std::cerr << "No existing bookings file found. Starting fresh." << std::endl;
+        return;
+    }
+
+    while (std::getline(file, line))
+    {
+        if (line.empty()) continue;
+        
+        std::stringstream ss(line);
+        std::string courtName, courtNumStr, date, hourStr, username;
+        
+        if (!std::getline(ss, courtName, ','))      continue;
+        if (!std::getline(ss, courtNumStr, ','))    continue;
+        if (!std::getline(ss, date, ','))           continue;
+        if (!std::getline(ss, hourStr, ','))        continue;
+        if (!std::getline(ss, username, ','))       continue;
+        
+        int hour = std::stoi(hourStr);
+        
+        // Find matching court
+        for (auto &court : courts)
+        {
+            std::string courtId = court -> saveFile();
+            while(courtId.back() != ',')    courtId.pop_back();
+            courtId.pop_back();
+
+            if (courtId != courtName + "," + courtNumStr)
+                continue;
+
+            court->bookSlot(date, hour, username);
+            break;
+        }
+    }
+
+    file.close();
+    return;
+}
+
+// -------------------- Save --------------------
+// (to CSV file)
 std::string User::saveFile()
 {
     std::string output = username;
@@ -177,60 +224,6 @@ void saveCourtData(const std::string &filename)
     return;
 }
 
-// Load bookings from file
-void readBookings(const std::string &filename)
-{
-    std::ifstream file(filename);
-    std::string line;
-
-    if (!file.is_open())
-    {
-        std::cerr << "No existing bookings file found. Starting fresh." << std::endl;
-        return;
-    }
-
-    while (std::getline(file, line))
-    {
-        if (line.empty()) continue;
-        
-        std::stringstream ss(line);
-        std::string courtName, courtNumStr, date, hourStr, username;
-        
-        if (!std::getline(ss, courtName, ','))      continue;
-        if (!std::getline(ss, courtNumStr, ','))    continue;
-        if (!std::getline(ss, date, ','))           continue;
-        if (!std::getline(ss, hourStr, ','))        continue;
-        if (!std::getline(ss, username, ','))       continue;
-        
-        int hour = std::stoi(hourStr);
-        
-        // Find matching court
-        for (auto &court : courts)
-        {
-            std::string courtId = court -> saveFile();
-            while(courtId.back() != ',')    courtId.pop_back();
-            courtId.pop_back();
-
-            if (courtId != courtName + "," + courtNumStr)
-                continue;
-
-            court->bookSlot(date, hour, username);
-            break;
-        }
-    }
-
-    file.close();
-    return;
-}
-
-// Expired bookings
-void deleteExpiredBookings()
-{
-    for (auto &court : courts)
-        court -> deleteExpiredBookings();
-}
-
-// Save bookings
 void saveBookings(const std::string &filename)
 {
     std::ofstream file;
@@ -267,4 +260,11 @@ void saveBookings(const std::string &filename)
 
     file.close();
     return;
+}
+
+// -------------------- Initialize --------------------
+void deleteExpiredBookings()
+{
+    for (auto &court : courts)
+        court -> deleteExpiredBookings();
 }

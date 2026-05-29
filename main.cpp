@@ -10,12 +10,10 @@ void operate()
 {
     while(true)
     {
-        std::cout << std::endl;
-        #ifdef _WIN32
+        #ifdef _WIN32   
             std::system("cls"); // For Windows
         #else
-            // Assume POSIX (Linux, macOS, etc.)
-            std::system("clear");
+            std::system("clear"); // Assume POSIX (Linux, macOS, etc.)
         #endif
 
         std::cout << std::endl;

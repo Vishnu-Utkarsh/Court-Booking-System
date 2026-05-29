@@ -1,6 +1,7 @@
 #include "storage.hpp"
 
-// Admin Login
+// -------------------- Admin --------------------
+// Login
 void adminLogin()
 {
     std::string adminName, adminPassword;
@@ -29,7 +30,6 @@ void adminLogin()
         return;
     }
 
-    std::cout << std::endl;
     #ifdef _WIN32
         std::system("cls");
     #else
@@ -39,161 +39,29 @@ void adminLogin()
     obj.showAdminPanel(adminPassword);
 }
 
-// Create Account
-void createAccount()
-{
-    std::string username, password;
-    std::cout << "Enter 0 to Back";
-
-    while (true)
-    {
-        std::cout << std::endl
-                  << "Enter username: ";
-        std::cin >> username;
-
-        if (username == "0")
-            return;
-        if (!users.count(username))
-            break;
-
-        std::cout << std::endl
-                  << "Username Already exist" << std::endl
-                  << "Try Again !" << std::endl;
-    }
-
-    std::cout << std::endl
-              << "Create password: ";
-    std::cin >> password;
-
-    if (password == "0")
-        return;
-
-    std::cout << std::endl;
-    #ifdef _WIN32
-        std::system("cls"); // For Windows
-    #else
-        // Assume POSIX (Linux, macOS, etc.)
-        std::system("clear");
-    #endif
-
-    std::cout << std::endl
-              << "Successfully Created Account !" << std::endl;
-    User newUser(username, password);
-    users[username] = newUser;
-    newUser.Login(password);
-}
-
-// User Login
-void userLogin()
-{
-    std::string username, password;
-    std::cout << "Enter 0 to Back";
-
-    while (true)
-    {
-        std::cout << std::endl
-                  << "Enter username: ";
-        std::cin >> username;
-
-        if (username == "0")
-            return;
-        if (users.count(username))
-            break;
-
-        std::cout << std::endl
-                  << "Username not found" << std::endl
-                  << "Try Again !" << std::endl;
-    }
-
-    User loginUser = users[username];
-    bool loggedIn = false;
-
-    std::cout << std::endl
-              << "Enter password: ";
-    std::cin >> password;
-
-    if (password == "0")
-        return;
-
-    loggedIn = loginUser.checkPassword(password);
-
-    if (!loggedIn)
-    {
-        std::cout << std::endl
-                  << "Wrong Password !" << std::endl;
-        return;
-    }
-
-    std::cout << std::endl;
-    #ifdef _WIN32
-        std::system("cls"); // For Windows
-    #else
-        // Assume POSIX (Linux, macOS, etc.)
-        std::system("clear");
-    #endif
-
-    std::cout << std::endl;
-    loginUser.Login(password);
-}
-
-// Display user bookings
-void User::bookings()
-{
-    std::cout << std::endl;
-    std::vector<std::pair<Court *, TimeSlot>> userBookings;
-
-    // Find all slots booked by this user across all courts
-    for (auto &court : courts)
-    {
-        const auto &bookingsMap = court->getBookings();
-        for (const auto &dateEntry : bookingsMap)
-        {
-            for (const auto &hourEntry : dateEntry.second)
-            {
-                if (hourEntry.second.isBooked() && hourEntry.second.bookedBy == username)
-                    userBookings.emplace_back(court, hourEntry.second);
-            }
-        }
-    }
-
-    if (userBookings.empty())
-    {
-        std::cout << "No Bookings Yet" << std::endl;
-        std::cout << std::endl;
-    }
-    else
-    {
-        std::cout << "Your Bookings:" << std::endl;
-        std::cout << "----------------------------------------------------" << std::endl;
-
-        for (int i = 0; i < (int)userBookings.size(); i++)
-        {
-            std::cout << std::setw(3) << std::setfill(' ') << (i + 1) << ") " << *userBookings[i].first
-                      << " : " << userBookings[i].second.toString() << std::endl;
-        }
-        std::cout << "----------------------------------------------------" << std::endl;
-        std::cout << std::endl;
-    }
-    std::cout << "Press Enter to continue..." << std::endl;
-    std::cin.ignore();
-    std::cin.get();
-    return;
-}
-
+// -------------------- Booking --------------------
 // Book court availability view
 void User::book()
 {
-    std::cout << std::endl;
     #ifdef _WIN32
-        std::system("cls"); // For Windows
+        std::system("cls");
     #else
-        // Assume POSIX (Linux, macOS, etc.)
         std::system("clear");
     #endif
 
     std::cout << std::endl;
     std::cout << "====== BOOKING COURT ======" << std::endl;
     std::cout << std::endl;
+
+    if(courts.empty())
+    {
+        std::cout << "No courts available for booking." << std::endl;
+        std::cout << std::endl
+                  << "Press Enter to continue..." << std::endl;
+        std::cin.ignore();
+        std::cin.get();
+        return;
+    }
 
     std::vector<std::string> nextDays = getNextDays();
 
@@ -397,7 +265,145 @@ void User::cancelBooking()
     std::cin.get();
 }
 
-// Operate during LoggedIn
+// Display user bookings
+void User::showBookings()
+{
+    std::cout << std::endl;
+    std::vector<std::pair<Court *, TimeSlot>> userBookings;
+
+    // Find all slots booked by this user across all courts
+    for (auto &court : courts)
+    {
+        const auto &bookingsMap = court->getBookings();
+        for (const auto &dateEntry : bookingsMap)
+        {
+            for (const auto &hourEntry : dateEntry.second)
+            {
+                if (hourEntry.second.isBooked() && hourEntry.second.bookedBy == username)
+                    userBookings.emplace_back(court, hourEntry.second);
+            }
+        }
+    }
+
+    if (userBookings.empty())
+    {
+        std::cout << "No Bookings Yet" << std::endl;
+        std::cout << std::endl;
+    }
+    else
+    {
+        std::cout << "Your Bookings:" << std::endl;
+        std::cout << "----------------------------------------------------" << std::endl;
+
+        for (int i = 0; i < (int)userBookings.size(); i++)
+        {
+            std::cout << std::setw(3) << std::setfill(' ') << (i + 1) << ") " << *userBookings[i].first
+                      << " : " << userBookings[i].second.toString() << std::endl;
+        }
+        std::cout << "----------------------------------------------------" << std::endl;
+        std::cout << std::endl;
+    }
+    std::cout << "Press Enter to continue..." << std::endl;
+    std::cin.ignore();
+    std::cin.get();
+    return;
+}
+
+// -------------------- User Operations --------------------
+// Create new user account
+void createAccount()
+{
+    std::string username, password;
+    std::cout << "Enter 0 to Back";
+
+    while (true)
+    {
+        std::cout << std::endl
+                  << "Enter username: ";
+        std::cin >> username;
+
+        if (username == "0")
+            return;
+        if (!users.count(username))
+            break;
+
+        std::cout << std::endl
+                  << "Username Already exist" << std::endl
+                  << "Try Again !" << std::endl;
+    }
+
+    std::cout << std::endl
+              << "Create password: ";
+    std::cin >> password;
+
+    if (password == "0")
+        return;
+
+    #ifdef _WIN32
+        std::system("cls");
+    #else
+        std::system("clear");
+    #endif
+
+    std::cout << std::endl
+              << "Successfully Created Account !" << std::endl;
+    User newUser(username, password);
+    users[username] = newUser;
+    newUser.Login(password);
+}
+
+// User Login
+void userLogin()
+{
+    std::string username, password;
+    std::cout << "Enter 0 to Back";
+
+    while (true)
+    {
+        std::cout << std::endl
+                  << "Enter username: ";
+        std::cin >> username;
+
+        if (username == "0")
+            return;
+        if (users.count(username))
+            break;
+
+        std::cout << std::endl
+                  << "Username not found" << std::endl
+                  << "Try Again !" << std::endl;
+    }
+
+    User loginUser = users[username];
+    bool loggedIn = false;
+
+    std::cout << std::endl
+              << "Enter password: ";
+    std::cin >> password;
+
+    if (password == "0")
+        return;
+
+    loggedIn = loginUser.checkPassword(password);
+
+    if (!loggedIn)
+    {
+        std::cout << std::endl
+                  << "Wrong Password !" << std::endl;
+        return;
+    }
+
+    #ifdef _WIN32
+        std::system("cls");
+    #else
+        std::system("clear");
+    #endif
+
+    std::cout << std::endl;
+    loginUser.Login(password);
+}
+
+// Operate while LoggedIn
 void User::Login(const std::string &password)
 {
     if (password != this->password)
@@ -436,7 +442,7 @@ void User::Login(const std::string &password)
         switch (task)
         {
         case 1:
-            bookings();
+            showBookings();
             break;
         case 2:
             book();
