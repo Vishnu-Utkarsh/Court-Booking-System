@@ -1,5 +1,5 @@
-#ifndef USER
-#define USER
+#ifndef USER_HPP
+#define USER_HPP
 
 #include "storage.hpp"
 
@@ -55,18 +55,5 @@ public:
         return os;
     }
 };
-
-// forward declaration
-User::User() {}
-User::User(const std::string &name, const std::string &pass) : username(name), password(pass), currState(AUTHORIZED) {}
-User::User(const std::string &name, const std::string &pass, const userStatus newState) : username(name), password(pass), currState(newState) {}
-
-std::string User::getUsername() { return username; }
-std::string User::getPassword() { return password; } // remove
-userStatus User::getStatus() { return currState; }
-
-bool User::checkPassword(const std::string &password) { return password == this->password; }
-
-void User::switchStatus(const userStatus newStatus) { currState = newStatus; }
 
 #endif

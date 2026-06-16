@@ -1,5 +1,5 @@
-#ifndef COURT
-#define COURT
+#ifndef COURT_HPP
+#define COURT_HPP
 
 #include "storage.hpp"
 
@@ -7,8 +7,6 @@
 #include <chrono>
 #include <iomanip>
 #include <sstream>
-
-// -------------------- Structure Definition --------------------
 
 // Court Type
 enum type
@@ -48,34 +46,13 @@ public:
     int hour;         // 6-22
     std::string bookedBy;
 
-    TimeSlot() : date(""), hour(-1), bookedBy("") {}
-    TimeSlot(const std::string &d, int h) : date(d), hour(h), bookedBy("") {}
-    TimeSlot(const std::string &d, int h, const std::string &user) : date(d), hour(h), bookedBy(user) {}
+    TimeSlot();
+    TimeSlot(const std::string &d, int h);
+    TimeSlot(const std::string &d, int h, const std::string &user);
 
-    bool isBooked() const { return ! bookedBy.empty(); }
-
-    // Change Format
-    std::string toString() const
-    {
-        std::stringstream ss;
-        ss << date << " \t" << std::setw(2) << std::setfill('0') << hour << ":00 to " << std::setw(2) << std::setfill('0') << hour + durationLimit << ":00";
-        return ss.str();
-    }
-
-    static TimeSlot fromString(const std::string &str)
-    {
-        std::string date, time, user;
-        std::stringstream ss(str);
-        int hour;
-
-        ss >> date >> hour;
-
-        TimeSlot slot(date, hour);
-        if (ss >> user)
-            slot.bookedBy = user;
-
-        return slot;
-    }
+    bool isBooked() const;
+    std::string toString() const;
+    TimeSlot fromString(const std::string &str) const;
 };
 
 // Parent Class Court
@@ -123,64 +100,10 @@ public:
     }
 };
 
-// forward declaration
-Court::Court() : currState(AVAILABLE) {}
-Court::Court(type courtType, std::string courtName, courtStatus currState) : currState(currState), courtName(courtName), courtType(courtType) {}
-Court::Court(type courtType, std::string courtName, int courtNumber, courtStatus currState) : currState(currState), courtName(courtName), courtType(courtType), courtNumber(courtNumber) {}
-
-void Court::switchStatus(courtStatus newState) { currState = newState; }
-courtStatus Court::getStatus() const { return currState; }
-std::string Court::getCourtName() const { return courtName + " " + std::to_string(courtNumber); }
-const std::map<std::string, std::map<int, TimeSlot>> &Court::getBookings() const { return bookings; }
-
-bool Court::isSlotAvailable(const std::string &date, int hour) const
-{
-    auto dateIt = bookings.find(date);
-    if (dateIt == bookings.end())
-        return true;
-
-    auto hourIt = dateIt -> second.find(hour);
-    return hourIt == dateIt->second.end() || ! hourIt -> second.isBooked();
-}
-
-bool Court::bookSlot(const std::string &date, int hour, const std::string &username)
-{
-    if (!isSlotAvailable(date, hour))
-        return false;
-
-    bookings[date][hour] = TimeSlot(date, hour, username);
-    return true;
-}
-
-bool Court::cancelSlot(const std::string &date, int hour)
-{
-    auto dateIt = bookings.find(date);
-    if (dateIt == bookings.end())
-        return false;
-
-    auto hourIt = dateIt->second.find(hour);
-    if (hourIt == dateIt->second.end() || !hourIt->second.isBooked())
-        return false;
-
-    dateIt->second.erase(hourIt);
-    return true;
-}
-
-std::vector<TimeSlot> Court::getAvailableSlots(const std::string &date) const
-{
-    std::vector<TimeSlot> available;
-    for (int hour = 6; hour < 22; hour++) // Operating hours: 6 AM to 10 PM
-    {
-        if (isSlotAvailable(date, hour))
-            available.push_back(TimeSlot(date, hour));
-    }
-    return available;
-}
-
 
 // -------------------- Derived Classes --------------------
 
-// Derived Class Badminton
+// Badminton
 class Badminton : public Court
 {
 public:
@@ -189,11 +112,7 @@ public:
     Badminton(const int number, courtStatus currState);
 };
 
-// forward declaration
-Badminton::Badminton(courtStatus currState) : Court(INDOOR, "Badminton Court", currState) {}
-Badminton::Badminton(const int number, courtStatus currState = AVAILABLE) : Court(INDOOR, "Badminton Court", number, currState) {}
-
-// Derived Class Basketball
+// Basketball
 class Basketball : public Court
 {
 public:
@@ -202,11 +121,7 @@ public:
     Basketball(const int number, courtStatus currState);
 };
 
-// forward declaration
-Basketball::Basketball(courtStatus currState) : Court(OUTDOOR, "Basketball Court", currState) {}
-Basketball::Basketball(const int number, courtStatus currState = AVAILABLE) : Court(OUTDOOR, "Basketball Court", number, currState) {}
-
-// Derived Class Volleyball
+// Volleyball
 class Volleyball : public Court
 {
 public:
@@ -215,11 +130,7 @@ public:
     Volleyball(const int number, courtStatus currState);
 };
 
-// forward declaration
-Volleyball::Volleyball(courtStatus currState) : Court(INDOOR, "Volleyball Court", currState) {}
-Volleyball::Volleyball(const int number, courtStatus currState = AVAILABLE) : Court(INDOOR, "Volleyball Court", number, currState) {}
-
-// Derived Class Football
+// Football
 class Football : public Court
 {
 public:
@@ -228,11 +139,7 @@ public:
     Football(const int number, courtStatus currState);
 };
 
-// forward declaration
-Football::Football(courtStatus currState) : Court(GROUND, "Football Ground", currState) {}
-Football::Football(const int number, courtStatus currState = AVAILABLE) : Court(GROUND, "Football Ground", number, currState) {}
-
-// Derived Class Cricket
+// Cricket
 class Cricket : public Court
 {
 public:
@@ -240,69 +147,5 @@ public:
     Cricket(courtStatus currState);
     Cricket(const int number, courtStatus currState);
 };
-
-// forward declaration
-Cricket::Cricket(courtStatus currState) : Court(GROUND, "Cricket Ground", currState) {}
-Cricket::Cricket(const int number, courtStatus currState = AVAILABLE) : Court(GROUND, "Cricket Ground", number, currState) {}
-
-
-// -------------------- Utilities --------------------
-
-void print(type courtType)
-    {   std::cout << std::setw(15) << courtType; }
-void print(Court &court)
-    {   std::cout << std::setw(16) << court << std::endl; }
-
-inline std::string getTodayDate()
-{
-    auto now = std::chrono::system_clock::now();
-    auto time = std::chrono::system_clock::to_time_t(now);
-    std::stringstream ss;
-    ss << std::put_time(std::localtime(&time), "%Y-%m-%d");
-    return ss.str();
-}
-
-inline std::string getDateOffset(int days)
-{
-    auto now = std::chrono::system_clock::now();
-    auto time = std::chrono::system_clock::to_time_t(now);
-    auto futureTime = time + (days * 86400); // 86400 seconds in a day
-    std::stringstream ss;
-    ss << std::put_time(std::localtime(&futureTime), "%Y-%m-%d");
-    return ss.str();
-}
-
-inline std::vector<std::string> getNextDays()
-{
-    std::vector<std::string> dates;
-
-    for (int i = 0; i < maxDayLimit; i++)
-        dates.push_back(getDateOffset(i));
-
-    return dates;
-}
-
-void Court::deleteExpiredBookings()
-{
-    std::string today = getTodayDate();
-    std::vector<std::string> datesToRemove;
-
-    for (auto &dateEntry : bookings)
-    {
-        if (dateEntry.first < today)
-            datesToRemove.push_back(dateEntry.first);
-    }
-
-    for (const auto &date : datesToRemove)
-        bookings.erase(date);
-}
-
-inline bool validateDate(const std::string &date)
-{
-    std::istringstream ss(date);
-    std::tm tm = {};
-    ss >> std::get_time(&tm, "%Y-%m-%d");
-    return !ss.fail();
-}
 
 #endif
