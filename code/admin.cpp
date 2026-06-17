@@ -250,8 +250,9 @@ void Admin::removeCourt()
     std::cout << std::setw(3) << removeIndex + 1 << ") " << *courts[removeIndex] << std::endl;
     std::cout << std::endl;
 
-    const auto &bookingsMap = courts[removeIndex]->getBookings();
+    const auto &bookingsMap = courts[removeIndex] -> getBookings();
     int bookingCount = 0;
+
     for (const auto &dateEntry : bookingsMap)
     {
         for (const auto &hourEntry : dateEntry.second)
@@ -304,10 +305,10 @@ void Admin::displayAdaptiveBookingFilter()
         int bookingCount = 0;
         for (int i = 0; i < (int)courts.size(); i++)
         {
-            const auto &bookingsMap = courts[i]->getBookings();
-            for (const auto &dateEntry : bookingsMap)
+            const std::map<std::string, std::map<int, TimeSlot>> &bookingsMap = courts[i] -> getBookings();
+            for (const std::pair<std::string, std::map<int, TimeSlot>> &dateEntry : bookingsMap)
             {
-                for (const auto &hourEntry : dateEntry.second)
+                for (const std::pair<int, TimeSlot> &hourEntry : dateEntry.second)
                 {
                     if (!hourEntry.second.isBooked())
                         continue;
@@ -328,8 +329,8 @@ void Admin::displayAdaptiveBookingFilter()
 
                     bookingCount++;
                     std::cout << std::setw(3) << bookingCount << ") "
-                                << "Court: " << courts[i] -> getCourtName() << " | "
-                                << "Date & Time: " << hourEntry.second.toString() << " | "
+                                << "Court: " << std::setw(20) << courts[i] -> getCourtName() << "\t | "
+                                << "Date & Time: " << hourEntry.second.toString() << "\t | "
                                 << "User: " << hourEntry.second.bookedBy << std::endl;
                 }
             }

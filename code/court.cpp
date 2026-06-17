@@ -1,33 +1,33 @@
 #include "court.hpp"
 
 // -------------------- TimeSlot --------------------
-    TimeSlot::TimeSlot() : date(""), hour(-1), bookedBy("") {}
-    TimeSlot::TimeSlot(const std::string &d, int h) : date(d), hour(h), bookedBy("") {}
-    TimeSlot::TimeSlot(const std::string &d, int h, const std::string &user) : date(d), hour(h), bookedBy(user) {}
+TimeSlot::TimeSlot() : date(""), hour(-1), bookedBy("") {}
+TimeSlot::TimeSlot(const std::string &d, int h) : date(d), hour(h), bookedBy("") {}
+TimeSlot::TimeSlot(const std::string &d, int h, const std::string &user) : date(d), hour(h), bookedBy(user) {}
 
-    bool TimeSlot::isBooked() const { return ! bookedBy.empty(); }
+bool TimeSlot::isBooked() const { return ! bookedBy.empty(); }
 
-    std::string TimeSlot::toString() const
-    {
-        std::stringstream ss;
-        ss << date << " \t" << std::setw(2) << std::setfill('0') << hour << ":00 to " << std::setw(2) << std::setfill('0') << hour + durationLimit << ":00";
-        return ss.str();
-    }
+std::string TimeSlot::toString() const
+{
+    std::stringstream ss;
+    ss << date << " \t" << std::setw(2) << std::setfill('0') << hour << ":00 to " << std::setw(2) << std::setfill('0') << hour + durationLimit << ":00";
+    return ss.str();
+}
 
-    TimeSlot TimeSlot::fromString(const std::string &str) const
-    {
-        std::string date, time, user;
-        std::stringstream ss(str);
-        int hour;
+TimeSlot TimeSlot::fromString(const std::string &str) const
+{
+    std::string date, time, user;
+    std::stringstream ss(str);
+    int hour;
 
-        ss >> date >> hour;
+    ss >> date >> hour;
 
-        TimeSlot slot(date, hour);
-        if (ss >> user)
-            slot.bookedBy = user;
+    TimeSlot slot(date, hour);
+    if (ss >> user)
+        slot.bookedBy = user;
 
-        return slot;
-    }
+    return slot;
+}
 
 // -------------------- Court --------------------
 

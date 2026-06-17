@@ -54,14 +54,14 @@ void operate()
 
 int main()
 {
-    readUserData("../data/userData.csv");
-    readCourtData("../data/courtData.csv");
-    readBookings("../data/bookings.csv");
+    readUserData("data/userData.csv");
+    readCourtData("data/courtData.csv");
+    readBookings("data/bookings.csv");
 
     deleteExpiredBookings();
     operate();
 
-    saveUserData("../data/userData.csv");
-    saveCourtData("../data/courtData.csv");
-    saveBookings("../data/bookings.csv");
+    saveUserData("data/userData.csv");
+    saveCourtData("data/courtData.csv");
+    saveBookings("data/bookings.csv");
 }

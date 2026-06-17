@@ -124,7 +124,7 @@ const int maxDayLimit = 5;    // Number of days in advance for booking
 
 ## Compilation
 ```bash
-g++ -std=c++17 main.cpp -o court_booking
+g++ -std=c++17 code/main.cpp -o court_booking
 ```
 
 ## Usage
@@ -134,22 +134,26 @@ g++ -std=c++17 main.cpp -o court_booking
 
 ## Project Structure
 ```
-├── storage.hpp       // Global data structures and constants
-├── court.hpp         // Court classes and TimeSlot structure
-├── court.cpp         // Court implementation
-├── user.hpp          // User class and management
-├── user.cpp          // User implementation
-├── admin.hpp         // Admin class and management
-├── admin.cpp         // Admin implementation
-├── operation.cpp     // User interactions and booking logic
-├── data.cpp          // CSV I/O operations
-├── main.cpp          // Entry point
+CourtBookingSystem/
+|
+├── code
+|   ├── storage.hpp       // Global data structures and constants
+|   ├── court.hpp         // Court classes and TimeSlot structure
+|   ├── court.cpp         // Court implementation
+|   ├── user.hpp          // User class and management
+|   ├── user.cpp          // User implementation
+|   ├── admin.hpp         // Admin class and management
+|   ├── admin.cpp         // Admin implementation
+|   ├── operation.cpp     // User interactions and booking logic
+|   ├── data.cpp          // CSV I/O operations
+|   └── main.cpp          // Entry point
 |
 ├── data
 │   ├── userData.csv      // User data storage
 │   ├── courtData.csv     // Court data storage
 │   └── bookings.csv      // Booking data storage
-└── README.md         // This file
+|
+└── README.md             // This file
 ```
 
 ## Future Enhancements
