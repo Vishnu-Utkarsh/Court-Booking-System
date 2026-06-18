@@ -1,4 +1,5 @@
 #include "storage.hpp"
+#include "utilities.cpp"
 
 // -------------------- Admin --------------------
 // Login
@@ -21,7 +22,7 @@ void adminLogin()
     if (adminPassword == "0")
         return;
 
-    obj.showAdminPanel(adminPassword);
+    obj.showAdminPanel(adminName, adminPassword);
 }
 
 // -------------------- User --------------------
@@ -33,35 +34,27 @@ void createAccount()
 
     while (true)
     {
-        std::cout << std::endl
-                  << "Enter username: ";
+        std::cout << std::endl << "Enter username: ";
         std::cin >> username;
 
         if (username == "0")
             return;
-        if (!users.count(username))
+        if (! users.count(username))
             break;
 
-        std::cout << std::endl
-                  << "Username Already exist" << std::endl
-                  << "Try Again !" << std::endl;
+        std::cout << std::endl << "Username Already exist"
+                  << std::endl << "Try using different username !";
     }
 
-    std::cout << std::endl
-              << "Create password: ";
+    std::cout << "Create password: ";
     std::cin >> password;
 
     if (password == "0")
         return;
 
-    #ifdef _WIN32
-        std::system("cls");
-    #else
-        std::system("clear");
-    #endif
+    clear();
+    std::cout << "Successfully Created New Account !" << std::endl;
 
-    std::cout << std::endl
-              << "Successfully Created Account !" << std::endl;
     User newUser(username, password);
     users[username] = newUser;
     newUser.Login(password);
@@ -83,9 +76,8 @@ void userLogin()
         if (users.count(username))
             break;
 
-        std::cout << std::endl
-                  << "Username not found" << std::endl
-                  << "Try Again !" << std::endl;
+        std::cout << std::endl << "Username not found"
+                  << std::endl << "Try Again !";
     }
 
     User loginUser = users[username];
@@ -97,9 +89,14 @@ void userLogin()
     if (password == "0")
         return;
 
-    loggedIn = loginUser.checkPassword(password);
+    clear();
+    loginUser.Login(password);
+}
 
-    if (!loggedIn)
+// Operate while LoggedIn
+void User::Login(const std::string &password)
+{
+    if (password != this -> password)
     {
         std::cout << std::endl << "Wrong Password !";
         std::cout << std::endl << "Press Enter to continue...";
@@ -108,37 +105,18 @@ void userLogin()
         return;
     }
 
-    #ifdef _WIN32
-        std::system("cls");
-    #else
-        std::system("clear");
-    #endif
-
-    std::cout << std::endl;
-    loginUser.Login(password);
-}
-
-// Operate while LoggedIn
-void User::Login(const std::string &password)
-{
-    if (password != this->password)
-        return;
     std::cout << "Successfully Logged In !" << std::endl;
-    int task = 0;
 
     while (true)
     {
-        std::cout << std::endl;
-
         if (currState == BANNED)
         {
-            std::cout << std::endl;
-            std::cout << "ID Banned !" << std::endl;
-            std::cout << "Press Enter to logOut..." << std::endl;
+            std::cout << std::endl << "ID Banned !";
+            std::cout << std::endl << "Press Enter to LogOut...";
             std::cout << std::endl;
             std::cin.ignore();
             std::cin.get();
-            break;
+            return;
         }
 
         std::cout << std::endl;
@@ -150,8 +128,8 @@ void User::Login(const std::string &password)
         std::cout << "Enter 0 to Logout:" << std::endl;
         std::cout << std::endl;
 
-        std::cin >> task;
-        if (!task)
+        int task = takeInput();
+        if (! task)
             break;
 
         switch (task)
@@ -169,7 +147,13 @@ void User::Login(const std::string &password)
             std::cout << "Enter valid operation !" << std::endl;
             break;
         }
+
+        clear();
     }
 
-    std::cout << "Successfully Logged Out !" << std::endl;
+    std::cout << std::endl << "Successfully Logged Out !";
+    std::cout << std::endl << "Press Enter to continue...";
+    std::cin.ignore();
+    std::cin.get();
+    return;
 }

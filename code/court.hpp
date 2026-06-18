@@ -52,7 +52,6 @@ public:
 
     bool isBooked() const;
     std::string toString() const;
-    TimeSlot fromString(const std::string &str) const;
 };
 
 // Parent Class Court

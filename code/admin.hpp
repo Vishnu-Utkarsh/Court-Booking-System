@@ -6,14 +6,14 @@
 class Admin
 {
 private:
-    std::string adminUsername;
+    std::string adminName;
     std::string adminPassword;
 
 public:
     Admin(const std::string adminName, const std::string password);
 
     bool authenticate(const std::string &name, const std::string &password) const;
-    void showAdminPanel(const std::string &password);
+    void showAdminPanel(const std::string &name, const std::string &password);
 
     // User Management
     void banUser(const std::string &adminName);
@@ -35,11 +35,11 @@ public:
 
 // Implementation
 Admin::Admin(const std::string adminName, const std::string password)
-    : adminUsername(adminName), adminPassword(password) {}
+    : adminName(adminName), adminPassword(password) {}
 
 bool Admin::authenticate(const std::string &name, const std::string &password) const
 {
-    if(name != adminUsername)   return false;
+    if(name != adminName)   return false;
     return password == adminPassword;
 }
 

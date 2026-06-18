@@ -1,49 +1,18 @@
 #include "user.hpp"
+#include "utilities.cpp"
 
 User::User() {}
 User::User(const std::string &name, const std::string &pass) : username(name), password(pass), currState(AUTHORIZED) {}
 User::User(const std::string &name, const std::string &pass, const userStatus newState) : username(name), password(pass), currState(newState) {}
 
-std::string User::getUsername() { return username; }
-std::string User::getPassword() { return password; } // remove
-userStatus User::getStatus() { return currState; }
-
-bool User::checkPassword(const std::string &password) { return password == this->password; }
-
 void User::switchStatus(const userStatus newStatus) { currState = newStatus; }
-
-// -------------------- Utilities --------------------
-
-inline std::string getDateOffset(int days)
-{
-    auto now = std::chrono::system_clock::now();
-    auto time = std::chrono::system_clock::to_time_t(now);
-    auto futureTime = time + (days * 86400); // 86400 seconds in a day
-    std::stringstream ss;
-    ss << std::put_time(std::localtime(&futureTime), "%Y-%m-%d");
-    return ss.str();
-}
-
-inline std::vector<std::string> getNextDays()
-{
-    std::vector<std::string> dates;
-
-    for (int i = 0; i < maxDayLimit; i++)
-        dates.push_back(getDateOffset(i));
-
-    return dates;
-}
 
 // -------------------- Booking --------------------
 
 // Book court availability view
 void User::book()
 {
-    #ifdef _WIN32
-        std::system("cls");
-    #else
-        std::system("clear");
-    #endif
+    clear();
 
     std::cout << std::endl;
     std::cout << "====== BOOKING COURT ======" << std::endl;
@@ -51,9 +20,8 @@ void User::book()
 
     if(courts.empty())
     {
-        std::cout << "No courts available for booking." << std::endl;
-        std::cout << std::endl
-                  << "Press Enter to continue..." << std::endl;
+        std::cout << std::endl << "No courts available for booking.";
+        std::cout << std::endl << "Press Enter to continue...";
         std::cin.ignore();
         std::cin.get();
         return;
@@ -72,8 +40,7 @@ void User::book()
     std::cout << std::endl
               << "Select court number (or 0 to cancel): ";
 
-    int courtChoice;
-    std::cin >> courtChoice;
+    int courtChoice = takeInput();
     std::cout << std::endl;
 
     if (! courtChoice)
@@ -112,7 +79,7 @@ void User::book()
 
         std::cout << std::endl
                   << "Enter choice (or 0 to cancel): ";
-        std::cin >> dayChoice;
+        dayChoice = takeInput();
 
         if (! dayChoice--)
             return;
@@ -146,10 +113,8 @@ void User::book()
                   << std::setw(2) << std::setfill('0') << availableSlots[i].hour + durationLimit << ":00" << std::endl;
     }
 
-    std::cout << std::endl
-              << "Select time slot (or 0 to cancel): ";
-    int slotChoice;
-    std::cin >> slotChoice;
+    std::cout << std::endl << "Select time slot (or 0 to cancel): ";
+    int slotChoice = takeInput();
 
     if (! slotChoice--)
         return;
@@ -174,8 +139,7 @@ void User::book()
     std::cout << "Time: " << availableSlots[slotChoice].hour << ":00 - "
                 << (availableSlots[slotChoice].hour + durationLimit) << ":00" << std::endl;
     std::cout << "================================" << std::endl;
-    std::cout << std::endl
-                << "Press Enter to continue..." << std::endl;
+    std::cout << std::endl << "Press Enter to continue...";
     std::cin.ignore();
     std::cin.get();
 }
@@ -183,7 +147,12 @@ void User::book()
 // Cancel user bookings
 void User::cancelBooking()
 {
+    clear();
+
     std::cout << std::endl;
+    std::cout << "====== BOOKING CANCELLATION ======" << std::endl;
+    std::cout << std::endl;
+
     std::vector<std::pair<Court *, TimeSlot>> userBookings;
 
     // Find all slots booked by this user across all courts
@@ -202,9 +171,8 @@ void User::cancelBooking()
 
     if (userBookings.empty())
     {
-        std::cout << "No Bookings to Cancel" << std::endl;
-        std::cout << std::endl;
-        std::cout << "Press Enter to continue..." << std::endl;
+        std::cout << std::endl << "No Bookings to Cancel";
+        std::cout << std::endl << "Press Enter to continue...";
         std::cin.ignore();
         std::cin.get();
         return;
@@ -221,8 +189,7 @@ void User::cancelBooking()
     std::cout << std::endl
               << "Select booking to cancel (or 0 to cancel): ";
 
-    int choice;
-    std::cin >> choice;
+    int choice = takeInput();
 
     if (! choice)
         return;
@@ -249,14 +216,12 @@ void User::cancelBooking()
     if (confirm == "yes")
     {
         courtToCancel -> cancelSlot(bookingToCancel.date, bookingToCancel.hour);
-        std::cout << std::endl;
-        std::cout << "Booking cancelled!" << std::endl;
+        std::cout << std::endl  << "Booking cancelled!";
     }
     else
-        std::cout << "Cancellation aborted." << std::endl;
+        std::cout << std::endl << "Cancellation aborted.";
 
-    std::cout << std::endl
-              << "Press Enter to continue..." << std::endl;
+    std::cout << std::endl << "Press Enter to continue...";
     std::cin.ignore();
     std::cin.get();
 }
@@ -264,7 +229,8 @@ void User::cancelBooking()
 // Display user bookings
 void User::showBookings()
 {
-    std::cout << std::endl;
+    clear();
+
     std::vector<std::pair<Court *, TimeSlot>> userBookings;
 
     // Find all slots booked by this user across all courts
@@ -282,13 +248,10 @@ void User::showBookings()
     }
 
     if (userBookings.empty())
-    {
-        std::cout << "No Bookings Yet" << std::endl;
-        std::cout << std::endl;
-    }
+        std::cout << std::endl << "No Bookings Yet" << std::endl;
     else
     {
-        std::cout << "Your Bookings:" << std::endl;
+        std::cout << std::endl << "Your Bookings:" << std::endl;
         std::cout << "----------------------------------------------------" << std::endl;
 
         for (int i = 0; i < (int)userBookings.size(); i++)
@@ -297,9 +260,8 @@ void User::showBookings()
                       << " : " << userBookings[i].second.toString() << std::endl;
         }
         std::cout << "----------------------------------------------------" << std::endl;
-        std::cout << std::endl;
     }
-    std::cout << "Press Enter to continue..." << std::endl;
+    std::cout << std::endl << "Press Enter to continue...";
     std::cin.ignore();
     std::cin.get();
     return;

@@ -1,13 +1,5 @@
 #include "admin.hpp"
-
-// -------------------- Utilities --------------------
-inline bool validateDate(const std::string &date)
-{
-    std::istringstream ss(date);
-    std::tm tm = {};
-    ss >> std::get_time(&tm, "%Y-%m-%d");
-    return !ss.fail();
-}
+#include "utilities.cpp"
 
 // -------------------- Users --------------------
 void Admin::banUser(const std::string &userName)
@@ -61,8 +53,7 @@ void Admin::changeCourtStatus()
     std::cout << std::endl;
     std::cout << "Enter court index to change status (or 0 to go back): ";
 
-    int courtIndex;
-    std::cin >> courtIndex;
+    int courtIndex = takeInput();
     std::cout << std::endl;
 
     if (! courtIndex--)
@@ -81,10 +72,8 @@ void Admin::changeCourtStatus()
     std::cout << "Enter 3 to set MAINTAINANCE" << std::endl;
     std::cout << "Enter choice: ";
 
-    int statusChoice;
     courtStatus newStatus;
-    std::cin >> statusChoice;
-    std::cout << std::endl;
+    int statusChoice = takeInput();
 
     switch (statusChoice)
     {
@@ -104,12 +93,15 @@ void Admin::changeCourtStatus()
         break;
 
     default:
-        std::cout << "Invalid choice!" << std::endl;
+        std::cout << std::endl << "Invalid choice!";
         return;
     }
 
     courts[courtIndex] -> switchStatus(newStatus);
-    std::cout << "Court '" << courts[courtIndex] -> getCourtName() << "' status changed to " << newStatus << "." << std::endl;
+    std::cout << std::endl << "Court '" << courts[courtIndex] -> getCourtName() << "' status changed to " << newStatus << ".";    
+    std::cout << std::endl << "Press Enter to continue...";
+    std::cin.ignore();
+    std::cin.get();
 }
 
 void Admin::displayAllCourts()
@@ -143,9 +135,8 @@ void Admin::addCourt()
     std::cout << "  Enter 0 to go back" << std::endl;
     std::cout << "----------------------------------------------------" << std::endl;
 
-    int courtType;
     std::cout << "Select court type (1-5): ";
-    std::cin >> courtType;
+    int courtType = takeInput();
 
     if(! courtType)
         return;
@@ -173,9 +164,8 @@ void Admin::addCourt()
         return;
     }
 
-    int courtNumber;
     std::cout << "Enter court number: ";
-    std::cin >> courtNumber;
+    int courtNumber = takeInput();
 
     if (courtNumber <= 0)
     {
@@ -220,10 +210,13 @@ void Admin::addCourt()
         return;
 
     courts.push_back(newCourt);
-    std::cout << std::endl;
-    std::cout << "New court added successfully!" << std::endl;
-    std::cout << "Court: " << *newCourt << std::endl;
     std::sort(courts.begin(), courts.end(), [](Court *x, Court *y) { return x -> getCourtName() < y -> getCourtName(); });
+
+    std::cout << std::endl << "New court added successfully!";
+    std::cout << std::endl << "Court: " << *newCourt;
+    std::cout << std::endl << "Press Enter to continue...";
+    std::cin.ignore();
+    std::cin.get();
 }
 
 void Admin::removeCourt()
@@ -232,14 +225,13 @@ void Admin::removeCourt()
         return;
 
     std::cout << std::endl;
-    int removeIndex;
     std::cout << "Enter court index to remove (or 0 to go back): ";
-    std::cin >> removeIndex;
+    int removeIndex = takeInput();
 
     if (! removeIndex--)
         return;
 
-    if (!isValidCourt(removeIndex))
+    if (! isValidCourt(removeIndex))
     {
         std::cout << "Invalid court index!" << std::endl;
         return;
@@ -280,8 +272,10 @@ void Admin::removeCourt()
 
     delete courts[removeIndex];
     courts.erase(courts.begin() + removeIndex);
-    std::cout << std::endl;
-    std::cout << "Court removed !" << std::endl;
+    std::cout << std::endl << "Court removed !";
+    std::cout << std::endl << "Press Enter to continue...";
+    std::cin.ignore();
+    std::cin.get();
 }
 
 // -------------------- Booking Management --------------------
@@ -293,11 +287,7 @@ void Admin::displayAdaptiveBookingFilter()
 
     while (true)
     {
-        #ifdef _WIN32
-            std::system("cls");
-        #else
-            std::system("clear");
-        #endif
+        clear();
 
         std::cout << "====== FILTERED BOOKINGS ======" << std::endl;
         std::cout << "----------------------------------------------------" << std::endl;
@@ -331,7 +321,7 @@ void Admin::displayAdaptiveBookingFilter()
                     std::cout << std::setw(3) << bookingCount << ") "
                                 << "Court: " << std::setw(20) << courts[i] -> getCourtName() << "\t | "
                                 << "Date & Time: " << hourEntry.second.toString() << "\t | "
-                                << "User: " << hourEntry.second.bookedBy << std::endl;
+                                << "Booked by: " << hourEntry.second.bookedBy << std::endl;
                 }
             }
         }
@@ -360,8 +350,7 @@ void Admin::displayAdaptiveBookingFilter()
         std::cout << "Enter 0 to Go Back:" << std::endl;
         std::cout << std::endl;
 
-        int choice;
-        std::cin >> choice;
+        int choice = takeInput();
         std::cout << std::endl;
 
 
@@ -376,53 +365,44 @@ void Admin::displayAdaptiveBookingFilter()
             std::string tempUser;
             std::cout << "Enter username (or 0 to disable filter): ";
             std::cin >> tempUser;
-            std::cout << std::endl;
 
             if (tempUser == "0")
             {
                 filterUser = "";
-                std::cout << "User filter disabled." << std::endl;
+                std::cout << std::endl << "User filter disabled.";
             }
             else if (users.count(tempUser))
             {
                 filterUser = tempUser;
-                std::cout << "User filter set to: " << filterUser << std::endl;
+                std::cout << std::endl << "User filter set to: " << filterUser;
             }
             else
             {
-                std::cout << "User not found!" << std::endl;
+                std::cout << std::endl << "User not found!";
             }
-            std::cout << "Press Enter to continue..." << std::endl;
-            std::cin.ignore();
-            std::cin.get();
             break;
         }
 
         case 2:
         {
             displayAllCourts();
-            int tempCourt;
             std::cout << "Enter court index (or 0 to disable filter): ";
-            std::cin >> tempCourt;
-            std::cout << std::endl;
+            int tempCourt = takeInput();
 
             if (! tempCourt--)
             {
                 filterCourt = -1;
-                std::cout << "Court filter disabled." << std::endl;
+                std::cout << std::endl << "Court filter disabled.";
             }
             else if (isValidCourt(tempCourt))
             {
                 filterCourt = tempCourt;
-                std::cout << "Court filter set to: " << courts[filterCourt] -> getCourtName() << std::endl;
+                std::cout << std::endl << "Court filter set to: " << courts[filterCourt] -> getCourtName();
             }
             else
             {
-                std::cout << "Invalid court index!" << std::endl;
+                std::cout << std::endl << "Invalid court index!";
             }
-            std::cout << "Press Enter to continue..." << std::endl;
-            std::cin.ignore();
-            std::cin.get();
             break;
         }
 
@@ -431,25 +411,21 @@ void Admin::displayAdaptiveBookingFilter()
             std::string tempDate;
             std::cout << "Enter booking date in YYYY-MM-DD format (or 0 to disable filter): ";
             std::cin >> tempDate;
-            std::cout << std::endl;
 
             if (tempDate == "0")
             {
                 filterDate = "";
-                std::cout << "Date filter disabled." << std::endl;
+                std::cout << std::endl << "Date filter disabled.";
             }
             else if(validateDate(tempDate))
             {
                 filterDate = tempDate;
-                std::cout << "Date filter set to: " << filterDate << std::endl;
+                std::cout << std::endl << "Date filter set to: " << filterDate;
             }
             else
             {
-                std::cout << "Invalid date format!" << std::endl;
+                std::cout << std::endl << "Invalid date format!";
             }
-            std::cout << "Press Enter to continue..." << std::endl;
-            std::cin.ignore();
-            std::cin.get();
             break;
         }
 
@@ -458,11 +434,7 @@ void Admin::displayAdaptiveBookingFilter()
             filterUser = "";
             filterCourt = -1;
             filterDate = "";
-            std::cout << std::endl;
-            std::cout << "All filters cleared." << std::endl;
-            std::cout << "Press Enter to continue..." << std::endl;
-            std::cin.ignore();
-            std::cin.get();
+            std::cout << std::endl << "All filters cleared.";
             break;
         }
 
@@ -470,13 +442,17 @@ void Admin::displayAdaptiveBookingFilter()
             std::cout << "Invalid option!" << std::endl;
             break;
         }
+
+        std::cout << std::endl << "Press Enter to continue...";
+        std::cin.ignore();
+        std::cin.get();
     }
 }
 
 // -------------------- Admin Panel --------------------
-void Admin::showAdminPanel(const std::string &password)
+void Admin::showAdminPanel(const std::string &name, const std::string &password)
 {
-    if (adminPassword != password)
+    if (adminName != name || adminPassword != password)
     {
         std::cout << std::endl << "Authentication failed!";
         std::cout << std::endl << "Press Enter to continue...";
@@ -485,18 +461,11 @@ void Admin::showAdminPanel(const std::string &password)
         return;
     }
 
-    std::cout << std::endl;
+    clear();
     std::cout << "Successfully Logged In as Admin!" << std::endl;
-    int task = 0;
 
     while (true)
     {
-        #ifdef _WIN32
-            std::system("cls");
-        #else
-            std::system("clear");
-        #endif
-
         std::cout << std::endl;
         std::cout << "====== ADMIN PANEL ======" << std::endl;
         std::cout << "----------------------------------------------------" << std::endl;
@@ -506,7 +475,7 @@ void Admin::showAdminPanel(const std::string &password)
         std::cout << "Enter 0 to Logout:" << std::endl;
         std::cout << std::endl;
 
-        std::cin >> task;
+        int task = takeInput();
         if (! task)  break;
 
         switch (task)
@@ -515,20 +484,15 @@ void Admin::showAdminPanel(const std::string &password)
         {
             while (true)
             {
-                #ifdef _WIN32
-                    std::system("cls");
-                #else
-                    std::system("clear");
-                #endif
-
+                clear();
                 displayAllUsers();
+
                 std::cout << std::endl;
                 std::cout << "Enter 1 to Ban User:" << std::endl;
                 std::cout << "Enter 2 to Unban User:" << std::endl;
                 std::cout << "Enter 0 to Go Back:" << std::endl;
 
-                int userTask;
-                std::cin >> userTask;
+                int userTask = takeInput();
                 std::cout << std::endl;
 
                 if (! userTask)
@@ -556,12 +520,7 @@ void Admin::showAdminPanel(const std::string &password)
         {
             while (true)
             {
-                #ifdef _WIN32
-                    std::system("cls");
-                #else
-                    std::system("clear");
-                #endif
-
+                clear();
                 displayAllCourts();
 
                 std::cout << std::endl;
@@ -573,8 +532,7 @@ void Admin::showAdminPanel(const std::string &password)
                 std::cout << "Enter 0 to Go Back:" << std::endl;
                 std::cout << std::endl;
 
-                int choice;
-                std::cin >> choice;
+                int choice = takeInput();
 
                 if (! choice)
                     break;
@@ -582,34 +540,23 @@ void Admin::showAdminPanel(const std::string &password)
                 switch (choice)
                 {
                 case 1:
-                {
                     changeCourtStatus();
-                    std::cout << "Press Enter to continue..." << std::endl;
-                    std::cin.ignore();
-                    std::cin.get();
                     break;
-                }
 
                 case 2:
-                {
                     addCourt();
-                    std::cout << "Press Enter to continue..." << std::endl;
-                    std::cin.ignore();
-                    std::cin.get();
                     break;
-                }
 
                 case 3:
-                {
                     removeCourt();
-                    std::cout << "Press Enter to continue..." << std::endl;
+                    break;
+
+                default:
+                    std::cout << "Invalid option !" << std::endl;
+                    std::cout << std::endl << "Press Enter to continue...";
                     std::cin.ignore();
                     std::cin.get();
                     break;
-                }
-
-                default:
-                    std::cout << "Invalid option!" << std::endl;
                 }
             }
             break;
@@ -622,10 +569,19 @@ void Admin::showAdminPanel(const std::string &password)
         }
 
         default:
-            std::cout << "Enter valid operation!" << std::endl;
+            std::cout << std::endl << "Enter valid option !";
+            std::cout << std::endl << "Press Enter to continue...";
+            std::cin.ignore();
+            std::cin.get();
             break;
         }
+
+        clear();
     }
 
-    std::cout << "Successfully Logged Out from Admin Panel!" << std::endl;
+    std::cout << std::endl << "Successfully Logged Out from Admin !";
+    std::cout << std::endl << "Press Enter to continue...";
+    std::cin.ignore();
+    std::cin.get();
+    return;
 }

@@ -114,7 +114,7 @@ Each court type can have multiple numbered instances.
 ## Operating Hours
 - **Daily Booking Window**: 6:00 AM to 10:00 PM
 - **Booking Duration**: 1 hours per slot
-- **Availability Window**: Current day + 5 days
+- **Availability Window**: 5 days (including current day)
 
 ## System Constants
 ```cpp
@@ -136,7 +136,7 @@ g++ -std=c++17 code/main.cpp -o court_booking
 ```
 CourtBookingSystem/
 |
-├── code
+├── code/
 |   ├── storage.hpp       // Global data structures and constants
 |   ├── court.hpp         // Court classes and TimeSlot structure
 |   ├── court.cpp         // Court implementation
@@ -148,7 +148,7 @@ CourtBookingSystem/
 |   ├── data.cpp          // CSV I/O operations
 |   └── main.cpp          // Entry point
 |
-├── data
+├── data/
 │   ├── userData.csv      // User data storage
 │   ├── courtData.csv     // Court data storage
 │   └── bookings.csv      // Booking data storage

@@ -2,6 +2,7 @@
 #include <iomanip>
 #include <string>
 
+#include "utilities.cpp"
 #include "data.cpp"
 #include "operation.cpp"
 #include "court.cpp"
@@ -12,11 +13,7 @@ void operate()
 {
     while(true)
     {
-        #ifdef _WIN32   
-            std::system("cls"); // For Windows
-        #else
-            std::system("clear"); // Assume POSIX (Linux, macOS, etc.)
-        #endif
+        clear();
 
         std::cout << std::endl;
         std::cout << "====== Select Operation ====== " << std::endl;
@@ -27,8 +24,7 @@ void operate()
         std::cout << "Enter 0 to Exit:" << std::endl;
         std::cout << std::endl;
 
-        int task;
-        std::cin >> task;
+        int task = takeInput();
 
         switch(task)
         {

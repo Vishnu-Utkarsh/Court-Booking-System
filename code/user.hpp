@@ -29,13 +29,7 @@ public:
     User(const std::string &name, const std::string &pass);
     User(const std::string &name, const std::string &pass, const userStatus newState);
 
-    // getters
-    std::string getUsername();
-    std::string getPassword(); // remove
-    userStatus getStatus();
-
-    // authentication
-    bool checkPassword(const std::string &password);
+    // authentication & Login
     void Login(const std::string &password);
 
     // switch userStatus

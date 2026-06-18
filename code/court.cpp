@@ -1,4 +1,5 @@
 #include "court.hpp"
+#include "utilities.cpp"
 
 // -------------------- TimeSlot --------------------
 TimeSlot::TimeSlot() : date(""), hour(-1), bookedBy("") {}
@@ -10,23 +11,8 @@ bool TimeSlot::isBooked() const { return ! bookedBy.empty(); }
 std::string TimeSlot::toString() const
 {
     std::stringstream ss;
-    ss << date << " \t" << std::setw(2) << std::setfill('0') << hour << ":00 to " << std::setw(2) << std::setfill('0') << hour + durationLimit << ":00";
+    ss << date << " \t" << std::setw(2) << std::setfill('0') << hour << ":00 to " << std::setw(2) << std::setfill('0') << hour + durationLimit << ":00" << " hrs";
     return ss.str();
-}
-
-TimeSlot TimeSlot::fromString(const std::string &str) const
-{
-    std::string date, time, user;
-    std::stringstream ss(str);
-    int hour;
-
-    ss >> date >> hour;
-
-    TimeSlot slot(date, hour);
-    if (ss >> user)
-        slot.bookedBy = user;
-
-    return slot;
 }
 
 // -------------------- Court --------------------
@@ -108,16 +94,7 @@ Cricket::Cricket(courtStatus currState) : Court(GROUND, "Cricket Ground", currSt
 Cricket::Cricket(const int number, courtStatus currState) : Court(GROUND, "Cricket Ground", number, currState) {}
 
 
-// -------------------- Utilities --------------------
-
-inline std::string getTodayDate()
-{
-    auto now = std::chrono::system_clock::now();
-    auto time = std::chrono::system_clock::to_time_t(now);
-    std::stringstream ss;
-    ss << std::put_time(std::localtime(&time), "%Y-%m-%d");
-    return ss.str();
-}
+// -------------------- Expired --------------------
 
 void Court::deleteExpiredBookings()
 {

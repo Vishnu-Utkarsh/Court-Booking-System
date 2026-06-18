@@ -10,11 +10,11 @@
 #include <set>
 #include <cmath>
 
-const int durationLimit = 1, maxDayLimit = 5; // hrs
-
 #include "user.hpp"
 #include "court.hpp"
 #include "admin.hpp"
+
+const int durationLimit = 1, maxDayLimit = 5; // hrs
 
 std::map<std::string, User> users;
 std::vector<Court *> courts;
