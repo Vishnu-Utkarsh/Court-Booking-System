@@ -137,7 +137,7 @@ g++ -std=c++17 code/main.cpp -o court_booking
 CourtBookingSystem/
 |
 ├── code/
-|   ├── storage.hpp       // Global data structures and constants
+|   ├── storage.hpp       // Global data storage variables and constants
 |   ├── court.hpp         // Court classes and TimeSlot structure
 |   ├── court.cpp         // Court implementation
 |   ├── user.hpp          // User class and management
@@ -158,6 +158,7 @@ CourtBookingSystem/
 
 ## Future Enhancements
 - Booking history and statistics
+- Multiple Admins
 - Multi-user bookings for same slot
 - Price/rate management
 - Email notifications

@@ -23,6 +23,14 @@ private:
     userStatus currState;
     std::string username, password;
 
+    // Account Settings
+    void changePassword();
+
+    // Booking
+    void showBookings() const;
+    void book() const;
+    void cancelBooking() const;
+
 public:
     // constructor
     User();
@@ -34,9 +42,6 @@ public:
 
     // switch userStatus
     void switchStatus(const userStatus newStatus);
-    void showBookings();
-    void book();
-    void cancelBooking();
 
     // save file
     std::string saveFile();

@@ -80,7 +80,7 @@ void userLogin()
                   << std::endl << "Try Again !";
     }
 
-    User loginUser = users[username];
+    User &loginUser = users[username];
     bool loggedIn = false;
 
     std::cout << "Enter password: ";
@@ -125,6 +125,7 @@ void User::Login(const std::string &password)
         std::cout << "Enter 1 to Check Bookings:" << std::endl;
         std::cout << "Enter 2 to Book Court:" << std::endl;
         std::cout << "Enter 3 to Cancel Booking:" << std::endl;
+        std::cout << "Enter 4 to Change Password:" << std::endl;
         std::cout << "Enter 0 to Logout:" << std::endl;
         std::cout << std::endl;
 
@@ -143,8 +144,14 @@ void User::Login(const std::string &password)
         case 3:
             cancelBooking();
             break;
+        case 4:
+            changePassword();
+            break;
         default:
             std::cout << "Enter valid operation !" << std::endl;
+            std::cout << std::endl << "Press Enter to continue...";
+            std::cin.ignore();
+            std::cin.get();
             break;
         }
 

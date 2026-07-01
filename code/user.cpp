@@ -7,10 +7,55 @@ User::User(const std::string &name, const std::string &pass, const userStatus ne
 
 void User::switchStatus(const userStatus newStatus) { currState = newStatus; }
 
+// -------------------- Account Settings --------------------
+void User::changePassword()
+{
+    clear();
+
+    std::string oldPassword, newPassword, checkPassword;
+
+    while(true)
+    {
+        std::cout << "Enter \"0\" to exit !" << std::endl;
+        std::cout << "Enter old Password: ";
+        std::cin >> oldPassword;
+
+        if(oldPassword == "0")      break;
+        if(oldPassword != password)
+        {
+            std::cout << "Wrong Password !" << std::endl;
+            break;
+        }
+
+        std::cout << "Enter new Password: ";
+        std::cin >> newPassword;
+        if(newPassword == "0")      break;
+
+        std::cout << "Confirm new Password: ";
+        std::cin >> checkPassword;
+        if(checkPassword == "0") break;
+    
+        if(checkPassword != newPassword)
+        {
+            std::cout << "Password didn't matched !" << std::endl;
+            break;
+        }
+
+        password = newPassword;
+        std::cout << "Password changed Successfully !" << std::endl;
+        break;
+    }
+
+    std::cout << std::endl << "Press Enter to continue...";
+    std::cin.ignore();
+    std::cin.get();
+    return;
+}
+
 // -------------------- Booking --------------------
 
 // Book court availability view
-void User::book()
+void User::book() const
 {
     clear();
 
@@ -145,7 +190,7 @@ void User::book()
 }
 
 // Cancel user bookings
-void User::cancelBooking()
+void User::cancelBooking() const
 {
     clear();
 
@@ -227,7 +272,7 @@ void User::cancelBooking()
 }
 
 // Display user bookings
-void User::showBookings()
+void User::showBookings() const
 {
     clear();
 

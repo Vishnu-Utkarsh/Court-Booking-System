@@ -19,6 +19,6 @@ const int durationLimit = 1, maxDayLimit = 5; // hrs
 std::map<std::string, User> users;
 std::vector<Court *> courts;
 
-static std::unordered_map<std::string, int> index = {{"Badminton Court", 1}, {"Basketball Court", 2}, {"Volleyball Court", 3}, {"Football Ground", 4}, {"Cricket Ground", 5}};
+std::unordered_map<std::string, int> index = {{"Badminton Court", 1}, {"Basketball Court", 2}, {"Volleyball Court", 3}, {"Football Ground", 4}, {"Cricket Ground", 5}};
 
 #endif
