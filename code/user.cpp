@@ -1,4 +1,4 @@
-#include "user.hpp"
+#include "../headers/user.hpp"
 #include "utilities.cpp"
 
 User::User() {}
@@ -11,7 +11,11 @@ void User::switchStatus(const userStatus newStatus) { currState = newStatus; }
 void User::changePassword()
 {
     clear();
-
+    std::cout << std::endl;
+    std::cout << "===================================" << std::endl;
+    std::cout << "          CHANGE PASSWORD          " << std::endl;
+    std::cout << "===================================" << std::endl;
+    std::cout << std::endl;
     std::string oldPassword, newPassword, checkPassword;
 
     while(true)
@@ -23,7 +27,7 @@ void User::changePassword()
         if(oldPassword == "0")      break;
         if(oldPassword != password)
         {
-            std::cout << "Wrong Password !" << std::endl;
+            std::cout << std::endl << "Wrong Password !";
             break;
         }
 
@@ -37,12 +41,12 @@ void User::changePassword()
     
         if(checkPassword != newPassword)
         {
-            std::cout << "Password didn't matched !" << std::endl;
+            std::cout << std::endl << "Password didn't matched !";
             break;
         }
 
         password = newPassword;
-        std::cout << "Password changed Successfully !" << std::endl;
+        std::cout << std::endl << "Password changed Successfully !";
         break;
     }
 
@@ -58,9 +62,10 @@ void User::changePassword()
 void User::book() const
 {
     clear();
-
     std::cout << std::endl;
-    std::cout << "====== BOOKING COURT ======" << std::endl;
+    std::cout << "====================================================================================================" << std::endl;
+    std::cout << "                                            BOOKING COURT                                           " << std::endl;
+    std::cout << "====================================================================================================" << std::endl;
     std::cout << std::endl;
 
     if(courts.empty())
@@ -76,15 +81,14 @@ void User::book() const
 
     // Display available courts
     std::cout << "All Courts:" << std::endl;
-    std::cout << "----------------------------------------------------" << std::endl;
+    std::cout << "----------------------------------------------------------------------------------------------------" << std::endl;
 
     for (int i = 0; i < (int)courts.size(); i++)
         std::cout << std::setw(3) << std::setfill(' ') << (i + 1) << ") " << *courts[i] << std::endl;
 
-    std::cout << "----------------------------------------------------" << std::endl;
-    std::cout << std::endl
-              << "Select court number (or 0 to cancel): ";
+    std::cout << "----------------------------------------------------------------------------------------------------" << std::endl;
 
+    std::cout << std::endl << "Select court number (or 0 to cancel): ";
     int courtChoice = takeInput();
     std::cout << std::endl;
 
@@ -101,11 +105,17 @@ void User::book() const
     if(selectedCourt -> getStatus() == RESERVED)
     {
         std::cout << "Court already reserved. Try another court !" << std::endl;
+        std::cout << std::endl << "Press Enter to continue...";
+        std::cin.ignore();
+        std::cin.get();
         return;
     }
     if(selectedCourt -> getStatus() == MAINTAINANCE)
     {
         std::cout << "Court under maintainance. Try another court !" << std::endl;
+        std::cout << std::endl << "Press Enter to continue...";
+        std::cin.ignore();
+        std::cin.get();
         return;
     }
 
@@ -147,6 +157,9 @@ void User::book() const
     if (availableSlots.empty())
     {
         std::cout << "No available slots for this date." << std::endl;
+        std::cout << std::endl << "Press Enter to continue...";
+        std::cin.ignore();
+        std::cin.get();
         return;
     }
 
@@ -167,6 +180,9 @@ void User::book() const
     if (slotChoice < 0 || slotChoice >= (int)availableSlots.size())
     {
         std::cout << "Invalid time slot selection!" << std::endl;
+        std::cout << std::endl << "Press Enter to continue...";
+        std::cin.ignore();
+        std::cin.get();
         return;
     }
     if (! selectedCourt -> bookSlot(selectedDate, availableSlots[slotChoice].hour, username))
@@ -183,7 +199,7 @@ void User::book() const
     std::cout << "Date: " << selectedDate << std::endl;
     std::cout << "Time: " << availableSlots[slotChoice].hour << ":00 - "
                 << (availableSlots[slotChoice].hour + durationLimit) << ":00" << std::endl;
-    std::cout << "================================" << std::endl;
+    std::cout << "--------------------------------------------------" << std::endl;
     std::cout << std::endl << "Press Enter to continue...";
     std::cin.ignore();
     std::cin.get();
@@ -193,9 +209,10 @@ void User::book() const
 void User::cancelBooking() const
 {
     clear();
-
     std::cout << std::endl;
-    std::cout << "====== BOOKING CANCELLATION ======" << std::endl;
+    std::cout << "==================================================================================================================================================" << std::endl;
+    std::cout << "                                                                BOOKING CANCELLATION                                                              " << std::endl;
+    std::cout << "==================================================================================================================================================" << std::endl;
     std::cout << std::endl;
 
     std::vector<std::pair<Court *, TimeSlot>> userBookings;
@@ -224,15 +241,15 @@ void User::cancelBooking() const
     }
 
     std::cout << "Your Bookings:" << std::endl;
-    std::cout << "----------------------------------------------------" << std::endl;
+    std::cout << "------------------------------------------------------------------------------------------------------------------------------------------------------" << std::endl;
 
     for (int i = 0; i < (int)userBookings.size(); i++)
         std::cout << std::setw(3) << std::setfill(' ') << (i + 1) << ") " << *userBookings[i].first
                   << " : " << userBookings[i].second.toString() << std::endl;
 
-    std::cout << "----------------------------------------------------" << std::endl;
+    std::cout << "------------------------------------------------------------------------------------------------------------------------------------------------------" << std::endl;
     std::cout << std::endl
-              << "Select booking to cancel (or 0 to cancel): ";
+              << "Select a booking to cancel (or 0 to cancel): ";
 
     int choice = takeInput();
 
@@ -249,11 +266,12 @@ void User::cancelBooking() const
     Court *courtToCancel = userBookings[choice - 1].first;
 
     std::cout << std::endl;
-    std::cout << "====== CANCEL BOOKING ======" << std::endl;
-    std::cout << "Confirming cancellation of:" << std::endl;
+    std::cout << "======================== CANCEL BOOKING ========================" << std::endl;
+    std::cout << "Confirming cancellation of -" << std::endl;
     std::cout << "Court: " << *courtToCancel << std::endl;
     std::cout << "Date & Time: " << bookingToCancel.toString() << std::endl;
-    std::cout << "Enter 'yes' to confirm cancellation: ";
+    std::cout << "================================================================" << std::endl;
+    std::cout << std::endl << "Enter 'yes' to confirm cancellation: ";
 
     std::string confirm;
     std::cin >> confirm;
@@ -261,7 +279,7 @@ void User::cancelBooking() const
     if (confirm == "yes")
     {
         courtToCancel -> cancelSlot(bookingToCancel.date, bookingToCancel.hour);
-        std::cout << std::endl  << "Booking cancelled!";
+        std::cout << std::endl  << "Booking cancelled !";
     }
     else
         std::cout << std::endl << "Cancellation aborted.";
@@ -275,7 +293,6 @@ void User::cancelBooking() const
 void User::showBookings() const
 {
     clear();
-
     std::vector<std::pair<Court *, TimeSlot>> userBookings;
 
     // Find all slots booked by this user across all courts
@@ -293,19 +310,25 @@ void User::showBookings() const
     }
 
     if (userBookings.empty())
-        std::cout << std::endl << "No Bookings Yet" << std::endl;
-    else
     {
-        std::cout << std::endl << "Your Bookings:" << std::endl;
-        std::cout << "----------------------------------------------------" << std::endl;
-
-        for (int i = 0; i < (int)userBookings.size(); i++)
-        {
-            std::cout << std::setw(3) << std::setfill(' ') << (i + 1) << ") " << *userBookings[i].first
-                      << " : " << userBookings[i].second.toString() << std::endl;
-        }
-        std::cout << "----------------------------------------------------" << std::endl;
+        std::cout << std::endl << "No Bookings Yet" << std::endl;
+        std::cout << std::endl << "Press Enter to continue...";
+        std::cin.ignore();
+        std::cin.get();
+        return;
     }
+
+    std::cout << "============================================================== Your Bookings ==============================================================" << std::endl;
+    std::cout << std::endl;
+    std::cout << "-------------------------------------------------------------------------------------------------------------------------------------------" << std::endl;
+
+    for (int i = 0; i < (int)userBookings.size(); i++)
+    {
+        std::cout << std::setw(3) << std::setfill(' ') << (i + 1) << ") " << *userBookings[i].first
+                    << " : " << userBookings[i].second.toString() << std::endl;
+    }
+    std::cout << "-------------------------------------------------------------------------------------------------------------------------------------------" << std::endl;
+
     std::cout << std::endl << "Press Enter to continue...";
     std::cin.ignore();
     std::cin.get();

@@ -31,6 +31,27 @@ Each court type can have multiple numbered instances.
 - **Court Management**: Add, remove, or modify court information
 - **Booking Management**: View and manage all bookings
 
+
+## Compilation and Usage
+
+### Prerequisites
+Make sure a C++ compiler such as GCC/G++ with C++11 or C++14 support is installed.
+
+### Clone Repository
+```bash
+git clone https://github.com/Vishnu-Utkarsh/Court-Booking-System.git
+```
+
+### Compile
+```bash
+g++ -std=c++17 code/main.cpp -o court_booking
+```
+
+### Run
+```bash
+./court_booking
+```
+
 ## How to Use
 
 ### Login as Admin
@@ -122,41 +143,36 @@ const int durationLimit = 1;  // Hours per booking
 const int maxDayLimit = 5;    // Number of days in advance for booking
 ```
 
-## Compilation
-```bash
-g++ -std=c++17 code/main.cpp -o court_booking
-```
-
-## Usage
-```bash
-./court_booking
-```
-
 ## Project Structure
 ```
 CourtBookingSystem/
 |
 ├── code/
-|   ├── storage.hpp       // Global data storage variables and constants
-|   ├── court.hpp         // Court classes and TimeSlot structure
+|   ├── utilities.cpp     // Elementary utility funcitons
 |   ├── court.cpp         // Court implementation
-|   ├── user.hpp          // User class and management
 |   ├── user.cpp          // User implementation
-|   ├── admin.hpp         // Admin class and management
 |   ├── admin.cpp         // Admin implementation
 |   ├── operation.cpp     // User interactions and booking logic
 |   ├── data.cpp          // CSV I/O operations
 |   └── main.cpp          // Entry point
+|
+├── headers/
+|   ├── storage.hpp       // Global data storage variables and constants
+|   ├── court.hpp         // Court classes and TimeSlot structure
+|   ├── user.hpp          // User class and management
+|   └── admin.hpp         // Admin class and management
 |
 ├── data/
 │   ├── userData.csv      // User data storage
 │   ├── courtData.csv     // Court data storage
 │   └── bookings.csv      // Booking data storage
 |
-└── README.md             // This file
+└── .gitignore            // Files to be Ignored
+└── README.md             // About Project -> This file
 ```
 
 ## Future Enhancements
+- Adding Graphical User Interface
 - Booking history and statistics
 - Multiple Admins
 - Multi-user bookings for same slot

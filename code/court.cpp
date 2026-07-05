@@ -1,4 +1,4 @@
-#include "court.hpp"
+#include "../headers/court.hpp"
 #include "utilities.cpp"
 
 // -------------------- TimeSlot --------------------

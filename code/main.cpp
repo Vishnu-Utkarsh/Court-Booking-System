@@ -14,16 +14,18 @@ void operate()
     while(true)
     {
         clear();
-
         std::cout << std::endl;
-        std::cout << "====== Select Operation ====== " << std::endl;
-        std::cout << "----------------------------------------------------" << std::endl;
-        std::cout << "Enter 1 to create new user account:" << std::endl;
-        std::cout << "Enter 2 to login to your account:" << std::endl;
-        std::cout << "Enter 3 to login as Admin:" << std::endl;
-        std::cout << "Enter 0 to Exit:" << std::endl;
+        std::cout << "==================================================" << std::endl;
+        std::cout << "                    Select Task                   " << std::endl;
+        std::cout << "==================================================" << std::endl;
+        std::cout << std::endl;
+        std::cout << "  [1] Create new user account:" << std::endl;
+        std::cout << "  [2] Login to your account:" << std::endl;
+        std::cout << "  [3] Login as Admin:" << std::endl;
+        std::cout << "  [0] Exit:" << std::endl;
         std::cout << std::endl;
 
+        std::cout << "Select an Option: ";
         int task = takeInput();
 
         switch(task)
@@ -43,7 +45,14 @@ void operate()
                 return;
                 break;
             }
-            default:    std::cout << "Enter valid operation !" << std::endl;    break;
+            default:
+            {
+                std::cout << std::endl << "Enter valid option !";
+                std::cout << std::endl << "Press Enter to continue...";
+                std::cin.ignore();
+                std::cin.get();
+                break;
+            }
         }
     }
 }

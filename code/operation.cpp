@@ -1,15 +1,20 @@
-#include "storage.hpp"
+#include "../headers/storage.hpp"
 #include "utilities.cpp"
 
 // -------------------- Admin --------------------
 // Login
 void adminLogin()
 {
+    clear();
     std::string adminName, adminPassword;
-    std::cout << std::endl;
-    std::cout << "====== ADMIN LOGIN ======" << std::endl;
-    std::cout << "Enter 0 to Back" << std::endl;
 
+    std::cout << std::endl;
+    std::cout << "==================================================" << std::endl;
+    std::cout << "                    ADMIN LOGIN                   " << std::endl;
+    std::cout << "==================================================" << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "Enter 0 to Back" << std::endl;
     std::cout << "Enter admin username: ";
     std::cin >> adminName;
 
@@ -29,7 +34,14 @@ void adminLogin()
 // Create new user account
 void createAccount()
 {
+    clear();
     std::string username, password;
+
+    std::cout << std::endl;
+    std::cout << "==================================================" << std::endl;
+    std::cout << "                   CREATE ACCOUNT                 " << std::endl;
+    std::cout << "==================================================" << std::endl;
+    std::cout << std::endl;
     std::cout << "Enter 0 to Back";
 
     while (true)
@@ -63,7 +75,14 @@ void createAccount()
 // User Login
 void userLogin()
 {
+    clear();
     std::string username, password;
+
+    std::cout << std::endl;
+    std::cout << "==================================================" << std::endl;
+    std::cout << "                     USER LOGIN                   " << std::endl;
+    std::cout << "==================================================" << std::endl;
+    std::cout << std::endl;
     std::cout << std:: endl << "Enter 0 to Back";
 
     while (true)
@@ -113,7 +132,6 @@ void User::Login(const std::string &password)
         {
             std::cout << std::endl << "ID Banned !";
             std::cout << std::endl << "Press Enter to LogOut...";
-            std::cout << std::endl;
             std::cin.ignore();
             std::cin.get();
             return;
@@ -122,13 +140,14 @@ void User::Login(const std::string &password)
         std::cout << std::endl;
         std::cout << "----------------------------------------------------" << std::endl;
         std::cout << "Choose tab :-" << std::endl;
-        std::cout << "Enter 1 to Check Bookings:" << std::endl;
-        std::cout << "Enter 2 to Book Court:" << std::endl;
-        std::cout << "Enter 3 to Cancel Booking:" << std::endl;
-        std::cout << "Enter 4 to Change Password:" << std::endl;
-        std::cout << "Enter 0 to Logout:" << std::endl;
+        std::cout << "  [1] Check Bookings:" << std::endl;
+        std::cout << "  [2] Book Court:" << std::endl;
+        std::cout << "  [3] Cancel Booking:" << std::endl;
+        std::cout << "  [4] Change Password:" << std::endl;
+        std::cout << "  [0] Logout:" << std::endl;
         std::cout << std::endl;
 
+        std::cout << "Select an Option: ";
         int task = takeInput();
         if (! task)
             break;
@@ -138,15 +157,19 @@ void User::Login(const std::string &password)
         case 1:
             showBookings();
             break;
+
         case 2:
             book();
             break;
+
         case 3:
             cancelBooking();
             break;
+
         case 4:
             changePassword();
             break;
+
         default:
             std::cout << "Enter valid operation !" << std::endl;
             std::cout << std::endl << "Press Enter to continue...";
