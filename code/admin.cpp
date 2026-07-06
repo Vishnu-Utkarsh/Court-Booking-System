@@ -1,8 +1,18 @@
 #include "../headers/admin.hpp"
 #include "utilities.cpp"
 
+// -------------------- Authentication --------------------
+Admin::Admin(const std::string adminName, const std::string password)
+    : adminName(adminName), adminPassword(password) {}
+
+bool Admin::authenticate(const std::string &name, const std::string &password) const
+{
+    if(name != adminName)   return false;
+    return password == adminPassword;
+}
+
 // -------------------- Users --------------------
-void Admin::banUser(const std::string &userName)
+void Admin::banUser(const std::string &userName) const
 {
     if (users.find(userName) == users.end())
     {
@@ -13,7 +23,7 @@ void Admin::banUser(const std::string &userName)
     std::cout << "User '" << userName << "' has been BANNED." << std::endl;
 }
 
-void Admin::unbanUser(const std::string &userName)
+void Admin::unbanUser(const std::string &userName) const
 {
     if (users.find(userName) == users.end())
     {
@@ -24,7 +34,7 @@ void Admin::unbanUser(const std::string &userName)
     std::cout << "User '" << userName << "' has been UNBANNED." << std::endl;
 }
 
-void Admin::displayAllUsers()
+void Admin::displayAllUsers() const
 {
     std::cout << "============================== ALL USERS ==============================" << std::endl;
     std::cout << std::endl;
@@ -47,7 +57,7 @@ void Admin::displayAllUsers()
 bool Admin::isValidCourt(int courtIndex) const
 {   return courtIndex >= 0 && courtIndex < (int)courts.size(); }
 
-void Admin::changeCourtStatus()
+void Admin::changeCourtStatus() const
 {
     std::cout << std::endl;
     std::cout << "Select court index to change status (or 0 to go back): ";
@@ -109,7 +119,7 @@ void Admin::changeCourtStatus()
     return;
 }
 
-void Admin::displayAllCourts()
+void Admin::displayAllCourts() const
 {
     std::cout << "================================== ALL COURTS ==================================" << std::endl;
     std::cout << std::endl;
@@ -127,7 +137,7 @@ void Admin::displayAllCourts()
     return;
 }
 
-void Admin::addCourt()
+void Admin::addCourt() const
 {
     std::cout << std::endl;
     std::cout << "================= ADD NEW COURT =================" << std::endl;
@@ -227,7 +237,7 @@ void Admin::addCourt()
     std::cin.get();
 }
 
-void Admin::removeCourt()
+void Admin::removeCourt() const
 {
     if(! courts.size())
         return;
@@ -287,7 +297,7 @@ void Admin::removeCourt()
 }
 
 // -------------------- Booking Management --------------------
-void Admin::displayAdaptiveBookingFilter()
+void Admin::displayAdaptiveBookingFilter() const
 {
     std::string filterUser = "";
     int filterCourt = -1;
@@ -463,7 +473,7 @@ void Admin::displayAdaptiveBookingFilter()
 }
 
 // -------------------- Admin Panel --------------------
-void Admin::showAdminPanel(const std::string &name, const std::string &password)
+void Admin::showAdminPanel(const std::string &name, const std::string &password) const
 {
     if (adminName != name || adminPassword != password)
     {
@@ -565,15 +575,12 @@ void Admin::showAdminPanel(const std::string &name, const std::string &password)
                 case 1:
                     changeCourtStatus();
                     break;
-
                 case 2:
                     addCourt();
                     break;
-
                 case 3:
                     removeCourt();
                     break;
-
                 default:
                     std::cout << "Invalid option !" << std::endl;
                     std::cout << std::endl << "Press Enter to continue...";

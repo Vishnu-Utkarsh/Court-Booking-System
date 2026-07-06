@@ -13,34 +13,24 @@ public:
     Admin(const std::string adminName, const std::string password);
 
     bool authenticate(const std::string &name, const std::string &password) const;
-    void showAdminPanel(const std::string &name, const std::string &password);
+    void showAdminPanel(const std::string &name, const std::string &password) const;
 
     // User Management
-    void banUser(const std::string &adminName);
-    void unbanUser(const std::string &adminName);
-    void displayAllUsers();
+    void banUser(const std::string &adminName) const;
+    void unbanUser(const std::string &adminName) const;
+    void displayAllUsers() const;
 
     // Court Management
-    void changeCourtStatus();
-    void displayAllCourts();
-    void addCourt();
-    void removeCourt();
+    void changeCourtStatus() const;
+    void displayAllCourts() const;
+    void addCourt() const;
+    void removeCourt() const;
 
     // Booking Management
-    void displayAdaptiveBookingFilter();
+    void displayAdaptiveBookingFilter() const;
 
     // Helper
     bool isValidCourt(int courtIndex) const;
 } obj("Admin", "QWERTY");
-
-// Implementation
-Admin::Admin(const std::string adminName, const std::string password)
-    : adminName(adminName), adminPassword(password) {}
-
-bool Admin::authenticate(const std::string &name, const std::string &password) const
-{
-    if(name != adminName)   return false;
-    return password == adminPassword;
-}
 
 #endif
