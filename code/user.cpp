@@ -24,7 +24,7 @@ void User::changePassword()
         std::cout << "Enter old Password: ";
         std::cin >> oldPassword;
 
-        if(oldPassword == "0")      break;
+        if(oldPassword == "0")      return;
         if(oldPassword != password)
         {
             std::cout << std::endl << "Wrong Password !";
@@ -33,11 +33,11 @@ void User::changePassword()
 
         std::cout << "Enter new Password: ";
         std::cin >> newPassword;
-        if(newPassword == "0")      break;
+        if(newPassword == "0")      return;
 
         std::cout << "Confirm new Password: ";
         std::cin >> checkPassword;
-        if(checkPassword == "0") break;
+        if(checkPassword == "0")    return;
     
         if(checkPassword != newPassword)
         {
@@ -130,7 +130,7 @@ void User::book() const
                   << "Select Date (YYYY-MM-DD format):" << std::endl;
 
         for (int i = 0; i < (int)nextDays.size(); i++)
-            std::cout << std::setw(3) << (i + 1) << ") " << nextDays[i] << std::endl;
+            std::cout << std::setw(3) << std::setfill(' ') << (i + 1) << ") " << nextDays[i] << std::endl;
 
         std::cout << std::endl
                   << "Enter choice (or 0 to cancel): ";
@@ -249,7 +249,7 @@ void User::cancelBooking() const
 
     std::cout << "------------------------------------------------------------------------------------------------------------------------------------------------------" << std::endl;
     std::cout << std::endl
-              << "Select a booking to cancel (or 0 to cancel): ";
+              << "Select corresponding booking's index to cancel (or 0 to abort cancellation): ";
 
     int choice = takeInput();
 

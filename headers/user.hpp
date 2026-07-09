@@ -10,9 +10,9 @@ std::ostream &operator<<(std::ostream &os, userStatus currState)
 {
     switch (currState)
     {
-    case userStatus::AUTHORIZED:    os << "AUTHORIZED"; break;
-    case userStatus::BANNED:        os << "BANNED";     break;
-    default:    os << "UNKNOWN";    break;
+        case userStatus::AUTHORIZED:    os << "AUTHORIZED"; break;
+        case userStatus::BANNED:        os << "BANNED";     break;
+        default:    os << "UNKNOWN";    break;
     }
     return os;
 }
