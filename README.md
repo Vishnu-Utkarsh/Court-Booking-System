@@ -1,7 +1,7 @@
 # Court-Booking-System 🏛️
 A Court Booking System is a software application designed to manage reservations for sports courts like badminton, tennis, or basketball, leveraging object-oriented programming (OOP) principles for modularity and scalability.
 
-## ✨ Key Features
+## Key Features
 
 ### 🗓️ Booking Availability System
 - **Real-time Availability**: View available time slots for today and for next few days
@@ -9,13 +9,13 @@ A Court Booking System is a software application designed to manage reservations
 - **Multiple Bookings**: Users can book different courts at different times
 - **Visual Slot Selection**: Easy-to-use interface for selecting dates and times
 
-### 👤 User Actions
+### User Actions
 - Create and manage user accounts with authentication
 - Track user bookings and booking history
 - Support for authorized and banned user statuses
 - Persistent user data storage
 
-### 🏟️ Court Management
+### Court Management
 Five types of courts available:
 1. Badminton Court** (Indoor)
 2. Basketball Court** (Outdoor)
@@ -35,49 +35,49 @@ Each court type can have multiple numbered instances.
     
 
 
-### 🤖 Administrative Functions
+### Administrative Functions
 - **User Management**: Approve or ban user accounts
 - **Court Management**: Add, remove, or modify court information
 - **Booking Management**: View and manage all bookings with Adaptive Filter
 
 
-## 💻 Compilation and Usage
+## Compilation and Usage
 
-### ✅ Prerequisites
+### Prerequisites
 Make sure a C++ compiler such as GCC/G++ with C++11 or C++14 support is installed.
 Run the following command in Terminal in directory where the project source code is to be stored
 
-### 📦 Clone Repository
+### Clone Repository
 ```bash
 git clone https://github.com/Vishnu-Utkarsh/Court-Booking-System.git
 ```
 
-### 🛠️ Compile
+### Compile
 ```bash
 g++ -std=c++17 code/main.cpp -o court_booking
 ```
 
-### ▶️ Run
+### Run
 ```bash
 ./court_booking
 ```
 
-## 🧭 How to Use
+## How to Use
 
-### 🔐 Login as Admin
+### Login as Admin
 1. Login with admin credentials
 ```txt
-  Admine name: Admin
+  Admin name: Admin
   Password: QWERTY
 ```
 2. Access the admin dashboard
 
-### 🆕 Creating User Account
+### Creating User Account
 1. Select "Create new user account" from the main menu
 2. Enter a unique username
 3. Create a secure password
 
-### 📅 Booking a Court
+### Booking a Court
 1. Login with your credentials
 2. Select "Book Court" from the user menu
 3. Choose a court from the available options
@@ -85,7 +85,7 @@ g++ -std=c++17 code/main.cpp -o court_booking
 5. Choose a time slot from the available hours
 6. Confirm your booking
 
-### 📂 Viewing Your Bookings
+### Viewing Your Bookings
 1. After logging in, select "Bookings Tab"
 2. View all your active bookings with:
    - Court name and number
@@ -93,7 +93,7 @@ g++ -std=c++17 code/main.cpp -o court_booking
    - Duration (1 hour default)
 3. Option to cancel bookings
 
-## ⚙️ Technical Architecture
+## Technical Architecture
 
 ### Core Components
 
@@ -124,7 +124,7 @@ g++ -std=c++17 code/main.cpp -o court_booking
 - **Login System**: Authenticate users and admins
 - **Menu Navigation**: Direct users to appropriate interfaces based on role
 
-### 💾 Data Persistence
+### Data Persistence
 
 #### Files
 - **userData.csv**: User credentials and status
@@ -142,18 +142,18 @@ g++ -std=c++17 code/main.cpp -o court_booking
 - `saveCourtData()`: Persist courts to CSV
 - `saveBookings()`: Persist bookings to CSV
 
-## 🕒 Operating Hours
+## Operating Hours
 - **Daily Booking Window**: 6:00 AM to 10:00 PM
 - **Booking Duration**: 1 hours per slot
 - **Availability Window**: 5 days (including current day)
 
-## 📐 System Constants
+## System Constants
 ```cpp
 const int durationLimit = 1;  // Hours per booking
 const int maxDayLimit = 5;    // Number of days in advance for booking
 ```
 
-## 🗂️ Project Structure
+## Project Structure
 ```
 CourtBookingSystem/
 |
@@ -181,7 +181,7 @@ CourtBookingSystem/
 └── README.md             // About Project -> This file
 ```
 
-## 🚀 Future Enhancements
+## Future Enhancements
 - Adding Graphical User Interface
 - Booking history and statistics
 - Booking feature for meeting rooms to be booked by society secrataries

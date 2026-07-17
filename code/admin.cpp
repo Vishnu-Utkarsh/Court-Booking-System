@@ -558,10 +558,10 @@ void Admin::showAdminPanel(const std::string &name, const std::string &password)
                 std::cout << std::endl;
                 std::cout << "====== COURT MANAGEMENT ======" << std::endl;
                 std::cout << "----------------------------------------------------" << std::endl;
-                std::cout << "  [1] to Change Court Status:" << std::endl;
-                std::cout << "  [2] to Add New Court:" << std::endl;
-                std::cout << "  [3] to Remove Court:" << std::endl;
-                std::cout << "  [0] to Go Back:" << std::endl;
+                std::cout << "  [1] Change Court Status:" << std::endl;
+                std::cout << "  [2] Add New Court:" << std::endl;
+                std::cout << "  [3] Remove Court:" << std::endl;
+                std::cout << "  [0] Go Back:" << std::endl;
                 std::cout << std::endl;
 
                 std::cout << "Select an Option: ";

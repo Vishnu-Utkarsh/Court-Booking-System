@@ -14,7 +14,8 @@
 #include "court.hpp"
 #include "admin.hpp"
 
-const int durationLimit = 1, maxDayLimit = 5; // hrs
+const int durationLimit = 1;    // Hours per booking
+const int maxDayLimit = 5;      // Number of days in advance for booking
 
 std::map<std::string, User> users;
 std::vector<Court *> courts;
