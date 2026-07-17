@@ -1,9 +1,9 @@
-# Court-Booking-System 🏛️
+# Court-Booking-System
 A Court Booking System is a software application designed to manage reservations for sports courts like badminton, tennis, or basketball, leveraging object-oriented programming (OOP) principles for modularity and scalability.
 
 ## Key Features
 
-### 🗓️ Booking Availability System
+### Booking Availability System
 - **Real-time Availability**: View available time slots for today and for next few days
 - **Hourly Time Slots**: Courts can be booked in intervals of 1-hour by default (from 6 AM to 10 PM)
 - **Multiple Bookings**: Users can book different courts at different times
