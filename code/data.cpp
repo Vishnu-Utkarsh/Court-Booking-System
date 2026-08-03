@@ -262,9 +262,19 @@ void saveBookings(const std::string &filename)
     return;
 }
 
-// -------------------- Initialize --------------------
+// -------------------- Delete --------------------
 void deleteExpiredBookings()
 {
     for (auto &court : courts)
         court -> deleteExpiredBookings();
+}
+
+void freeMemory()
+{
+    for (Court *court : courts)
+        if (court != NULL)
+            delete court;
+
+    courts.clear();
+    users.clear();
 }

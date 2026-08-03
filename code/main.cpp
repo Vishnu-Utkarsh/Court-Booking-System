@@ -69,4 +69,6 @@ int main()
     saveUserData("data/userData.csv");
     saveCourtData("data/courtData.csv");
     saveBookings("data/bookings.csv");
+
+    freeMemory();
 }
