@@ -1,5 +1,5 @@
 # Court-Booking-System
-A Court Booking System is a software application designed to manage reservations for sports courts like badminton, tennis, or basketball, leveraging object-oriented programming (OOP) principles for modularity and scalability.
+A Court Booking System is a software application designed to manage reservations for sports courts like badminton, LawnTennis, or basketball, leveraging object-oriented programming (OOP) principles for modularity and scalability.
 
 ## Key Features
 
@@ -16,12 +16,13 @@ A Court Booking System is a software application designed to manage reservations
 - Persistent user data storage
 
 ### Court Management
-Five types of courts available:
+Six types of courts available:
 1. Badminton Court** (Indoor)
 2. Basketball Court** (Outdoor)
 3. Volleyball Court** (Indoor)
 4. Football Ground** (Ground)
 5. Cricket Ground** (Ground)
+6. Lawn Tennis** (Outdoor)
 
 Each court type can have multiple numbered instances.
 
@@ -65,7 +66,7 @@ g++ -std=c++17 code/main.cpp -o court_booking
 ## How to Use
 
 ### Login as Admin
-1. Login with admin credentials
+1. Login with admin credentials [Case Sensitive]
 ```txt
   Admin name: Admin
   Password: QWERTY
@@ -76,6 +77,7 @@ g++ -std=c++17 code/main.cpp -o court_booking
 1. Select "Create new user account" from the main menu
 2. Enter a unique username
 3. Create a secure password
+4. Now you can Login with same credentials next time when you want to login again
 
 ### Booking a Court
 1. Login with your credentials
@@ -83,7 +85,8 @@ g++ -std=c++17 code/main.cpp -o court_booking
 3. Choose a court from the available options
 4. Select a date from the next 5 days (including today)
 5. Choose a time slot from the available hours
-6. Confirm your booking
+6. Select sports equipment to issue if required (optional)
+7. Confirm your booking
 
 ### Viewing Your Bookings
 1. After logging in, select "Bookings Tab"
@@ -91,6 +94,7 @@ g++ -std=c++17 code/main.cpp -o court_booking
    - Court name and number
    - Date and time
    - Duration (1 hour default)
+   - See equipments issued (if choosen)
 3. Option to cancel bookings
 
 ## Technical Architecture
@@ -104,8 +108,11 @@ g++ -std=c++17 code/main.cpp -o court_booking
   - Username of booker
 - **Court Class**: Base class with multi-day booking support
   - Tracks bookings in a map: `date → hour → TimeSlot`
-  - Methods for checking and making bookings
-- **Derived Classes**: Badminton, Basketball, Volleyball, Football, Cricket courts with specific attributes
+  - Methods for checking and initiate bookings
+- **Derived Classes**: Badminton, Basketball, Volleyball, Football, Cricket, LawnTennis courts with specific attributes
+  - Inherited functions from Abstract Class "Court"
+  - Constructors for each derived class
+  - Optional feature function to issue sports equipments
 
 #### User Interface (`user.cpp`)
 - **User::book()**: Interactive booking interface with:

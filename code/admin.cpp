@@ -7,7 +7,8 @@ Admin::Admin(const std::string adminName, const std::string password)
 
 bool Admin::authenticate(const std::string &name, const std::string &password) const
 {
-    if(name != adminName)   return false;
+    if (name != adminName)
+        return false;
     return password == adminPassword;
 }
 
@@ -55,7 +56,9 @@ void Admin::displayAllUsers() const
 
 // -------------------- Courts --------------------
 bool Admin::isValidCourt(int courtIndex) const
-{   return courtIndex >= 0 && courtIndex < (int)courts.size(); }
+{
+    return courtIndex >= 0 && courtIndex < (int)courts.size();
+}
 
 void Admin::changeCourtStatus() const
 {
@@ -65,7 +68,7 @@ void Admin::changeCourtStatus() const
     int courtIndex = takeInput();
     std::cout << std::endl;
 
-    if (! courtIndex--)
+    if (!courtIndex--)
         return;
 
     if (!isValidCourt(courtIndex))
@@ -74,7 +77,7 @@ void Admin::changeCourtStatus() const
         return;
     }
 
-    std::cout << "-------------------- Select an Option --------------------" <<std::endl;
+    std::cout << "-------------------- Select an Option --------------------" << std::endl;
     std::cout << std::endl;
     std::cout << "[1] Set AVAILABLE" << std::endl;
     std::cout << "[2] Set RESERVED" << std::endl;
@@ -104,16 +107,20 @@ void Admin::changeCourtStatus() const
         break;
 
     default:
-        std::cout << std::endl << "Invalid choice !";
-        std::cout << std::endl << "Press Enter to continue...";
+        std::cout << std::endl
+                  << "Invalid choice !";
+        std::cout << std::endl
+                  << "Press Enter to continue...";
         std::cin.ignore();
         std::cin.get();
         return;
     }
 
-    courts[courtIndex] -> switchStatus(newStatus);
-    std::cout << std::endl << "Court '" << courts[courtIndex] -> getCourtName() << "' status changed to " << newStatus << ".";
-    std::cout << std::endl << "Press Enter to continue...";
+    courts[courtIndex]->switchStatus(newStatus);
+    std::cout << std::endl
+              << "Court '" << courts[courtIndex]->getCourtName() << "' status changed to " << newStatus << ".";
+    std::cout << std::endl
+              << "Press Enter to continue...";
     std::cin.ignore();
     std::cin.get();
     return;
@@ -147,13 +154,14 @@ void Admin::addCourt() const
     std::cout << "  [3] Volleyball Court" << std::endl;
     std::cout << "  [4] Football Ground" << std::endl;
     std::cout << "  [5] Cricket Ground" << std::endl;
+    std::cout << "  [6] Lawn Tennis Court" << std::endl;
     std::cout << "  [0] back" << std::endl;
     std::cout << "==================================================" << std::endl;
 
     std::cout << "Select court type: ";
     int courtType = takeInput();
 
-    if(! courtType)
+    if (!courtType)
         return;
 
     std::string courtTypeName;
@@ -174,18 +182,22 @@ void Admin::addCourt() const
     case 5:
         courtTypeName = "Cricket Ground";
         break;
+    case 6:
+        courtTypeName = "Lawn Tennis Court";
+        break;
     default:
         std::cout << "Invalid court type!" << std::endl;
         return;
     }
 
-    std::cout << "Enter choice for new court number: ";
+    std::cout << "Enter new court number: ";
     int courtNumber = takeInput();
 
     if (courtNumber <= 0)
     {
         std::cout << "Court number must be positive!" << std::endl;
-        std::cout << std::endl << "Press Enter to continue...";
+        std::cout << std::endl
+                  << "Press Enter to continue...";
         std::cin.ignore();
         std::cin.get();
         return;
@@ -194,7 +206,7 @@ void Admin::addCourt() const
     // Check for duplicate court
     for (const auto &court : courts)
     {
-        if (court -> getCourtName() != courtTypeName + " " + std::to_string(courtNumber))
+        if (court->getCourtName() != courtTypeName + " " + std::to_string(courtNumber))
             continue;
 
         std::cout << std::endl;
@@ -222,34 +234,42 @@ void Admin::addCourt() const
     case 5:
         newCourt = new Cricket(courtNumber, AVAILABLE);
         break;
+    case 6:
+        newCourt = new LawnTennis(courtNumber, AVAILABLE);
+        break;
     }
 
-    if (! newCourt)
+    if (!newCourt)
         return;
 
     courts.push_back(newCourt);
-    std::sort(courts.begin(), courts.end(), [](Court *x, Court *y) { return x -> getCourtName() < y -> getCourtName(); });
+    std::sort(courts.begin(), courts.end(),
+              [](Court *x, Court *y)
+              { return x->getCourtName() < y->getCourtName(); });
 
-    std::cout << std::endl << "New court added successfully !";
-    std::cout << std::endl << "Court: " << *newCourt;
-    std::cout << std::endl << "Press Enter to continue...";
+    std::cout << std::endl
+              << "New court added successfully !";
+    std::cout << std::endl
+              << "Court: " << *newCourt;
+    std::cout << std::endl
+              << "Press Enter to continue...";
     std::cin.ignore();
     std::cin.get();
 }
 
 void Admin::removeCourt() const
 {
-    if(! courts.size())
+    if (!courts.size())
         return;
 
     std::cout << std::endl;
     std::cout << "Enter court index to remove (or 0 to go back): ";
     int removeIndex = takeInput();
 
-    if (! removeIndex--)
+    if (!removeIndex--)
         return;
 
-    if (! isValidCourt(removeIndex))
+    if (!isValidCourt(removeIndex))
     {
         std::cout << "Invalid court index!" << std::endl;
         return;
@@ -260,7 +280,7 @@ void Admin::removeCourt() const
     std::cout << std::setw(3) << std::setfill(' ') << removeIndex + 1 << ") " << *courts[removeIndex] << std::endl;
     std::cout << std::endl;
 
-    const auto &bookingsMap = courts[removeIndex] -> getBookings();
+    const auto &bookingsMap = courts[removeIndex]->getBookings();
     int bookingCount = 0;
 
     for (const auto &dateEntry : bookingsMap)
@@ -290,8 +310,10 @@ void Admin::removeCourt() const
 
     delete courts[removeIndex];
     courts.erase(courts.begin() + removeIndex);
-    std::cout << std::endl << "Court removed !";
-    std::cout << std::endl << "Press Enter to continue...";
+    std::cout << std::endl
+              << "Court removed !";
+    std::cout << std::endl
+              << "Press Enter to continue...";
     std::cin.ignore();
     std::cin.get();
 }
@@ -302,6 +324,7 @@ void Admin::displayAdaptiveBookingFilter() const
     std::string filterUser = "";
     int filterCourt = -1;
     std::string filterDate = "";
+    bool filterIssuedOnly = false;
 
     while (true)
     {
@@ -311,6 +334,9 @@ void Admin::displayAdaptiveBookingFilter() const
         std::cout << std::endl;
         std::cout << "-------------------------------------------------------------------------------------------------------------------------" << std::endl;
         std::cout << std::endl;
+        // Column header aligned with listing below
+        std::cout << std::right << std::setw(5) << "No." << std::left << std::setw(28) << "Court" << " | " << std::left << std::setw(36) << "Date & Time" << " | " << std::left << std::setw(20) << "Booked by" << std::endl;
+        std::cout << "-------------------------------------------------------------------------------------------------------------------------" << std::endl;
 
         int bookingCount = 0;
         for (int i = 0; i < (int)courts.size(); i++)
@@ -334,14 +360,23 @@ void Admin::displayAdaptiveBookingFilter() const
                     if (! filterDate.empty() && dateEntry.first != filterDate)
                         matchesFilter = false;
 
+                    if (filterIssuedOnly && hourEntry.second.issuedItems.empty())
+                        matchesFilter = false;
+
                     if (! matchesFilter)
                         continue;
 
                     bookingCount++;
-                    std::cout << std::setw(3) << std::setfill(' ') << bookingCount << ") "
-                                << "Court: " << std::setw(20) << courts[i] -> getCourtName() << "\t | "
-                                << "Date & Time: " << hourEntry.second.toString() << "\t | "
-                                << "Booked by: " << hourEntry.second.bookedBy << std::endl;
+                    // aligned columns: CourtName | Date & Time | Booked by
+                    std::string items = hourEntry.second.issuedItemsToString();
+                    std::cout << std::right << std::setw(3) << std::setfill(' ') << bookingCount << ") "
+                              << std::left << std::setw(28) << courts[i] -> getCourtName() << " | "
+                              << std::left << std::setw(36) << hourEntry.second.toString() << " | "
+                              << std::left << std::setw(20) << hourEntry.second.bookedBy;
+                    if (! items.empty())
+                        std::cout << " | " << items;
+                    std::cout << std::endl;
+                    std::cout << std::setfill(' ');
                 }
             }
         }
@@ -368,14 +403,14 @@ void Admin::displayAdaptiveBookingFilter() const
         std::cout << "  [1] Add/Change User Filter:" << std::endl;
         std::cout << "  [2] Add/Change Court Filter:" << std::endl;
         std::cout << "  [3] Add/Change Date Filter:" << std::endl;
-        std::cout << "  [4] Clear All Filters:" << std::endl;
+        std::cout << "  [4] Toggle: Show only bookings with issued items" << std::endl;
+        std::cout << "  [5] Clear All Filters:" << std::endl;
         std::cout << "  [0] Back:" << std::endl;
         std::cout << std::endl;
 
         std::cout << "Select Filter Option: ";
         int choice = takeInput();
         std::cout << std::endl;
-
 
         if (! choice)
             break;
@@ -440,7 +475,7 @@ void Admin::displayAdaptiveBookingFilter() const
                 filterDate = "";
                 std::cout << std::endl << "Date filter disabled.";
             }
-            else if(validateDate(tempDate))
+            else if (validateDate(tempDate))
             {
                 filterDate = tempDate;
                 std::cout << std::endl << "Date filter set to: " << filterDate;
@@ -454,9 +489,18 @@ void Admin::displayAdaptiveBookingFilter() const
 
         case 4:
         {
+            filterIssuedOnly = !filterIssuedOnly;
+            std::cout << std::endl
+                      << "Show only bookings with issued items: " << (filterIssuedOnly ? "ON" : "OFF");
+            break;
+        }
+
+        case 5:
+        {
             filterUser = "";
             filterCourt = -1;
             filterDate = "";
+            filterIssuedOnly = false;
             std::cout << std::endl << "All filters cleared.";
             break;
         }
@@ -477,8 +521,10 @@ void Admin::showAdminPanel(const std::string &name, const std::string &password)
 {
     if (adminName != name || adminPassword != password)
     {
-        std::cout << std::endl << "Authentication failed!";
-        std::cout << std::endl << "Press Enter to continue...";
+        std::cout << std::endl
+                  << "Authentication failed!";
+        std::cout << std::endl
+                  << "Press Enter to continue...";
         std::cin.ignore();
         std::cin.get();
         return;
@@ -502,7 +548,7 @@ void Admin::showAdminPanel(const std::string &name, const std::string &password)
 
         std::cout << "Select an Option: ";
         int task = takeInput();
-        if (! task)  break;
+        if(! task)  break;
 
         switch (task)
         {
@@ -523,13 +569,14 @@ void Admin::showAdminPanel(const std::string &name, const std::string &password)
                 int userTask = takeInput();
                 std::cout << std::endl;
 
-                if (! userTask)
+                if (!userTask)
                     break;
 
                 if (userTask != 1 && userTask != 2)
                 {
                     std::cout << "Invalid option!" << std::endl;
-                    std::cout << std::endl << "Press Enter to continue...";
+                    std::cout << std::endl
+                              << "Press Enter to continue...";
                     std::cin.ignore();
                     std::cin.get();
                     continue;
@@ -567,7 +614,7 @@ void Admin::showAdminPanel(const std::string &name, const std::string &password)
                 std::cout << "Select an Option: ";
                 int choice = takeInput();
 
-                if (! choice)
+                if (!choice)
                     break;
 
                 switch (choice)
@@ -583,7 +630,8 @@ void Admin::showAdminPanel(const std::string &name, const std::string &password)
                     break;
                 default:
                     std::cout << "Invalid option !" << std::endl;
-                    std::cout << std::endl << "Press Enter to continue...";
+                    std::cout << std::endl
+                              << "Press Enter to continue...";
                     std::cin.ignore();
                     std::cin.get();
                     break;

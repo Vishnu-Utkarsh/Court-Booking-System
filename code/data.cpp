@@ -83,25 +83,31 @@ void readCourtData(const std::string &filename)
                 court = new Basketball(courtNumber, (courtStatus) currState);
                 break;
             }
-        
+
             case 3:
             {
                 int courtNumber = std::stoi(row_fields[1]), currState = stoi(row_fields[2]);
                 court = new Volleyball(courtNumber, (courtStatus) currState);
                 break;
             }
-        
+
             case 4:
             {
                 int courtNumber = std::stoi(row_fields[1]), currState = stoi(row_fields[2]);
                 court = new Football(courtNumber, (courtStatus) currState);
                 break;
             }
-        
+
             case 5:
             {
                 int courtNumber = std::stoi(row_fields[1]), currState = stoi(row_fields[2]);
                 court = new Cricket(courtNumber, (courtStatus) currState);
+                break;
+            }
+            case 6:
+            {
+                int courtNumber = std::stoi(row_fields[1]), currState = stoi(row_fields[2]);
+                court = new LawnTennis(courtNumber, (courtStatus) currState);
                 break;
             }
         }
@@ -119,25 +125,27 @@ void readBookings(const std::string &filename)
 
     if (!file.is_open())
     {
-        std::cerr << "No existing bookings file found. Starting fresh." << std::endl;
+        std::cerr << "No existing bookings file found. indexing fresh." << std::endl;
         return;
     }
 
     while (std::getline(file, line))
     {
-        if (line.empty()) continue;
-        
+        if(line.empty())    continue;
+
         std::stringstream ss(line);
         std::string courtName, courtNumStr, date, hourStr, username;
-        
+        std::string itemsField;
+
         if (!std::getline(ss, courtName, ','))      continue;
         if (!std::getline(ss, courtNumStr, ','))    continue;
         if (!std::getline(ss, date, ','))           continue;
         if (!std::getline(ss, hourStr, ','))        continue;
         if (!std::getline(ss, username, ','))       continue;
-        
+
+        std::getline(ss, itemsField);
+
         int hour = std::stoi(hourStr);
-        
         // Find matching court
         for (auto &court : courts)
         {
@@ -148,7 +156,27 @@ void readBookings(const std::string &filename)
             if (courtId != courtName + "," + courtNumStr)
                 continue;
 
-            court->bookSlot(date, hour, username);
+            court -> bookSlot(date, hour, username);
+
+            size_t index = 0;
+            while (index < itemsField.size())
+            {
+                size_t pos = itemsField.find('|', index);
+                std::string token;
+                if (pos == std::string::npos)
+                {
+                    token = itemsField.substr(index);
+                    index = itemsField.size();
+                }
+                else
+                {
+                    token = itemsField.substr(index, pos - index);
+                    index = pos + 1;
+                }
+
+                if (! token.empty())
+                    court -> addIssuedItem(date, hour, token);
+            }
             break;
         }
     }
@@ -235,7 +263,7 @@ void saveBookings(const std::string &filename)
         return;
     }
 
-    // Format: CourtName,CourtNumber,Date,Hour,Username
+    // Format: CourtName,CourtNumber,Date,Hour,Username,Items
     for (int i = 0; i < (int)courts.size(); i++)
     {
         const auto &bookingsMap = courts[i]->getBookings();
@@ -243,17 +271,28 @@ void saveBookings(const std::string &filename)
         {
             for (const auto &hourEntry : dateEntry.second)
             {
-                if (! hourEntry.second.isBooked())
+                if (!hourEntry.second.isBooked())
                     continue;
 
-                std::string courtId = courts[i] -> saveFile();
-                while(courtId.back() != ',')    courtId.pop_back();
+                std::string courtId = courts[i]->saveFile();
+                while (courtId.back() != ',')
+                    courtId.pop_back();
                 courtId.pop_back();
 
-                file << courtId << "," 
+                std::string itemsStr;
+                const auto &issued = hourEntry.second.issuedItems;
+                for (size_t k = 0; k < issued.size(); ++k)
+                {
+                    if (k)
+                        itemsStr.push_back('|');
+                    itemsStr += issued[k];
+                }
+
+                file << courtId << ","
                      << dateEntry.first << ","
                      << hourEntry.first << ","
-                     << hourEntry.second.bookedBy << std::endl;
+                     << hourEntry.second.bookedBy << ","
+                     << itemsStr << std::endl;
             }
         }
     }
@@ -266,7 +305,7 @@ void saveBookings(const std::string &filename)
 void deleteExpiredBookings()
 {
     for (auto &court : courts)
-        court -> deleteExpiredBookings();
+        court->deleteExpiredBookings();
 }
 
 void freeMemory()

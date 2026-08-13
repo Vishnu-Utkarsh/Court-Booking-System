@@ -10,30 +10,54 @@
 
 // Court Type
 enum type
-{   INDOOR, OUTDOOR, GROUND };
-std::ostream& operator<<(std::ostream& os, type courtType)
+{
+    INDOOR,
+    OUTDOOR,
+    GROUND
+};
+std::ostream &operator<<(std::ostream &os, type courtType)
 {
     switch (courtType)
     {
-        case type::INDOOR:  os << "INDOOR";     break;
-        case type::OUTDOOR: os << "OUTDOOR";    break;
-        case type::GROUND:  os << "GROUND";     break;
-        default:            os << "UNKNOWN";    break;
+    case type::INDOOR:
+        os << "INDOOR";
+        break;
+    case type::OUTDOOR:
+        os << "OUTDOOR";
+        break;
+    case type::GROUND:
+        os << "GROUND";
+        break;
+    default:
+        os << "UNKNOWN";
+        break;
     }
     return os;
 }
 
 // Court Status
 enum courtStatus
-{   AVAILABLE, RESERVED, MAINTAINANCE };
-std::ostream& operator<<(std::ostream& os, courtStatus currState)
+{
+    AVAILABLE,
+    RESERVED,
+    MAINTAINANCE
+};
+std::ostream &operator<<(std::ostream &os, courtStatus currState)
 {
     switch (currState)
     {
-        case courtStatus::AVAILABLE:    os << "Available";      break;
-        case courtStatus::RESERVED:     os << "Reserved";       break;
-        case courtStatus::MAINTAINANCE: os << "Maintainance";   break;
-        default:                        os << "UNKNOWN";        break;
+    case courtStatus::AVAILABLE:
+        os << "Available";
+        break;
+    case courtStatus::RESERVED:
+        os << "Reserved";
+        break;
+    case courtStatus::MAINTAINANCE:
+        os << "Maintainance";
+        break;
+    default:
+        os << "UNKNOWN";
+        break;
     }
     return os;
 }
@@ -45,6 +69,7 @@ public:
     std::string date; // YYYY-MM-DD format
     int hour;         // 6-22
     std::string bookedBy;
+    std::vector<std::string> issuedItems;
 
     TimeSlot();
     TimeSlot(const std::string &d, int h);
@@ -52,6 +77,7 @@ public:
 
     bool isBooked() const;
     std::string toString() const;
+    std::string issuedItemsToString() const;
 };
 
 // Parent Class Court
@@ -85,6 +111,12 @@ public:
     // save file
     std::string saveFile();
 
+    // attach issued item to a booked slot
+    bool addIssuedItem(const std::string &date, int hour, const std::string &item);
+
+    // issue items provided by the court (abstract)
+    virtual std::vector<std::string> issueItems() const = 0;
+
     // delete expired bookings
     void deleteExpiredBookings();
 
@@ -99,7 +131,6 @@ public:
     }
 };
 
-
 // -------------------- Derived Classes --------------------
 
 // Badminton
@@ -109,6 +140,7 @@ public:
     // constructor
     Badminton(courtStatus currState);
     Badminton(const int number, courtStatus currState);
+    std::vector<std::string> issueItems() const override;
 };
 
 // Basketball
@@ -118,6 +150,7 @@ public:
     // constructor
     Basketball(courtStatus currState);
     Basketball(const int number, courtStatus currState);
+    std::vector<std::string> issueItems() const override;
 };
 
 // Volleyball
@@ -127,6 +160,7 @@ public:
     // constructor
     Volleyball(courtStatus currState);
     Volleyball(const int number, courtStatus currState);
+    std::vector<std::string> issueItems() const override;
 };
 
 // Football
@@ -136,6 +170,7 @@ public:
     // constructor
     Football(courtStatus currState);
     Football(const int number, courtStatus currState);
+    std::vector<std::string> issueItems() const override;
 };
 
 // Cricket
@@ -145,6 +180,16 @@ public:
     // constructor
     Cricket(courtStatus currState);
     Cricket(const int number, courtStatus currState);
+    std::vector<std::string> issueItems() const override;
+};
+
+// Lawn Tennis
+class LawnTennis : public Court
+{
+public:
+    LawnTennis(courtStatus currState);
+    LawnTennis(const int number, courtStatus currState);
+    std::vector<std::string> issueItems() const override;
 };
 
 #endif
