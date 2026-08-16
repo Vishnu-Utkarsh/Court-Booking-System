@@ -104,6 +104,7 @@ void readCourtData(const std::string &filename)
                 court = new Cricket(courtNumber, (courtStatus) currState);
                 break;
             }
+
             case 6:
             {
                 int courtNumber = std::stoi(row_fields[1]), currState = stoi(row_fields[2]);
@@ -305,7 +306,7 @@ void saveBookings(const std::string &filename)
 void deleteExpiredBookings()
 {
     for (auto &court : courts)
-        court->deleteExpiredBookings();
+        court -> deleteExpiredBookings();
 }
 
 void freeMemory()

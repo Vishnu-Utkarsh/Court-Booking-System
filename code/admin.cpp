@@ -49,7 +49,7 @@ void Admin::displayAllUsers() const
 
     int i = 0;
     for (auto &user : users)
-        std::cout << std::setw(3) << std::setfill(' ') << ++i << ") " << user.second << std::endl;
+        std::cout << std::right << std::setw(3) << std::setfill(' ') << ++i << ") " << user.second << std::endl;
     std::cout << "-----------------------------------------------------------------------" << std::endl;
     return;
 }
@@ -117,10 +117,8 @@ void Admin::changeCourtStatus() const
     }
 
     courts[courtIndex]->switchStatus(newStatus);
-    std::cout << std::endl
-              << "Court '" << courts[courtIndex]->getCourtName() << "' status changed to " << newStatus << ".";
-    std::cout << std::endl
-              << "Press Enter to continue...";
+    std::cout << std::endl << "Court '" << courts[courtIndex]->getCourtName() << "' status changed to " << newStatus << ".";
+    std::cout << std::endl << "Press Enter to continue...";
     std::cin.ignore();
     std::cin.get();
     return;
@@ -139,7 +137,7 @@ void Admin::displayAllCourts() const
     }
 
     for (int i = 0; i < (int)courts.size(); i++)
-        std::cout << std::setw(3) << std::setfill(' ') << i + 1 << ") " << *courts[i] << std::endl;
+        std::cout << std::right << std::setw(3) << std::setfill(' ') << i + 1 << ") " << *courts[i] << std::endl;
     std::cout << "--------------------------------------------------------------------------------" << std::endl;
     return;
 }
@@ -247,12 +245,9 @@ void Admin::addCourt() const
               [](Court *x, Court *y)
               { return x->getCourtName() < y->getCourtName(); });
 
-    std::cout << std::endl
-              << "New court added successfully !";
-    std::cout << std::endl
-              << "Court: " << *newCourt;
-    std::cout << std::endl
-              << "Press Enter to continue...";
+    std::cout << std::endl << "New court added successfully !";
+    std::cout << std::endl << "Court: " << *newCourt;
+    std::cout << std::endl << "Press Enter to continue...";
     std::cin.ignore();
     std::cin.get();
 }
@@ -310,10 +305,8 @@ void Admin::removeCourt() const
 
     delete courts[removeIndex];
     courts.erase(courts.begin() + removeIndex);
-    std::cout << std::endl
-              << "Court removed !";
-    std::cout << std::endl
-              << "Press Enter to continue...";
+    std::cout << std::endl << "Court removed !";
+    std::cout << std::endl << "Press Enter to continue...";
     std::cin.ignore();
     std::cin.get();
 }
@@ -335,7 +328,7 @@ void Admin::displayAdaptiveBookingFilter() const
         std::cout << "-------------------------------------------------------------------------------------------------------------------------" << std::endl;
         std::cout << std::endl;
         // Column header aligned with listing below
-        std::cout << std::right << std::setw(5) << "No." << std::left << std::setw(28) << "Court" << " | " << std::left << std::setw(36) << "Date & Time" << " | " << std::left << std::setw(20) << "Booked by" << std::endl;
+        std::cout << std::left << std::setw(5) << "No.)" << std::left << std::setw(28) << "Court" << " | " << std::left << std::setw(36) << "Date & Time" << " | " << std::left << std::setw(20) << "Booked by" << std::endl;
         std::cout << "-------------------------------------------------------------------------------------------------------------------------" << std::endl;
 
         int bookingCount = 0;
@@ -396,7 +389,9 @@ void Admin::displayAdaptiveBookingFilter() const
             std::cout << "  -> Court: " << courts[filterCourt]->getCourtName() << std::endl;
         if (! filterDate.empty())
             std::cout << "  -> Date: " << filterDate << std::endl;
-        if (filterUser.empty() && filterCourt == -1 && filterDate.empty())
+        if (filterIssuedOnly)
+            std::cout << "  -> Items is/are issued: " << std::boolalpha << filterIssuedOnly << std::endl;
+        if (filterUser.empty() && filterCourt == -1 && filterDate.empty() && ! filterIssuedOnly)
             std::cout << "  (No filters applied - showing all bookings)" << std::endl;
 
         std::cout << "--------------------------------------------------" << std::endl;
@@ -489,9 +484,8 @@ void Admin::displayAdaptiveBookingFilter() const
 
         case 4:
         {
-            filterIssuedOnly = !filterIssuedOnly;
-            std::cout << std::endl
-                      << "Show only bookings with issued items: " << (filterIssuedOnly ? "ON" : "OFF");
+            filterIssuedOnly = ! filterIssuedOnly;
+            std::cout << std::endl << "Show only bookings with issued items: " << (filterIssuedOnly ? "ON" : "OFF");
             break;
         }
 
@@ -569,7 +563,7 @@ void Admin::showAdminPanel(const std::string &name, const std::string &password)
                 int userTask = takeInput();
                 std::cout << std::endl;
 
-                if (!userTask)
+                if (! userTask)
                     break;
 
                 if (userTask != 1 && userTask != 2)
@@ -591,6 +585,10 @@ void Admin::showAdminPanel(const std::string &name, const std::string &password)
                     banUser(userName);
                 else
                     unbanUser(userName);
+
+                std::cout << std::endl << "Press Enter to continue...";
+                std::cin.ignore();
+                std::cin.get();
             }
             break;
         }

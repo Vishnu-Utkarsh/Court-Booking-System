@@ -54,7 +54,7 @@ bool Court::isSlotAvailable(const std::string &date, int hour) const
 
 bool Court::bookSlot(const std::string &date, int hour, const std::string &username)
 {
-    if (!isSlotAvailable(date, hour))
+    if (! isSlotAvailable(date, hour))
         return false;
 
     bookings[date][hour] = TimeSlot(date, hour, username);
@@ -86,6 +86,20 @@ std::vector<TimeSlot> Court::getAvailableSlots(const std::string &date) const
     return available;
 }
 
+bool Court::addIssuedItem(const std::string &date, int hour, const std::string &item)
+{
+    auto dateIt = bookings.find(date);
+    if (dateIt == bookings.end())
+        return false;
+
+    auto hourIt = dateIt->second.find(hour);
+    if (hourIt == dateIt->second.end() || !hourIt->second.isBooked())
+        return false;
+
+    hourIt -> second.issuedItems.push_back(item);
+    return true;
+}
+
 // -------------------- Derived Classes --------------------
 
 // Badminton
@@ -112,14 +126,14 @@ Cricket::Cricket(const int number, courtStatus currState) : Court(GROUND, "Crick
 LawnTennis::LawnTennis(courtStatus currState) : Court(OUTDOOR, "Lawn Tennis Court", currState) {}
 LawnTennis::LawnTennis(const int number, courtStatus currState) : Court(OUTDOOR, "Lawn Tennis Court", number, currState) {}
 
-// -------------------- issueItems Implementations --------------------
+// -------------------- IssueItems --------------------
 
-std::vector<std::string> Badminton::issueItems() const { return {"Shuttle"}; }
-std::vector<std::string> Basketball::issueItems() const { return {"Basket Ball"}; }
-std::vector<std::string> Volleyball::issueItems() const { return {"Volley Ball"}; }
-std::vector<std::string> Football::issueItems() const { return {"Foot Ball"}; }
-std::vector<std::string> Cricket::issueItems() const { return {"Season Ball"}; }
-std::vector<std::string> LawnTennis::issueItems() const { return {"Rackets", "Ball"}; }
+std::vector<std::string> Badminton::issueItems()    const { return {"Shuttle"}; }
+std::vector<std::string> Basketball::issueItems()   const { return {"Basket Ball"}; }
+std::vector<std::string> Volleyball::issueItems()   const { return {"Volley Ball"}; }
+std::vector<std::string> Football::issueItems()     const { return {"Foot Ball"}; }
+std::vector<std::string> Cricket::issueItems()      const { return {"Season Ball"}; }
+std::vector<std::string> LawnTennis::issueItems()   const { return {"Racket", "Tennis Ball"}; }
 
 // -------------------- Expired --------------------
 
@@ -137,14 +151,14 @@ void Court::deleteExpiredBookings()
     for (const auto &date : datesToRemove)
     {
         auto it = bookings.find(date);
-        if (it != bookings.end())
-        {
-            // clear issued items to free memory
-            for (auto &hourEntry : it->second)
-                hourEntry.second.issuedItems.clear();
+        if (it == bookings.end())
+            continue;
 
-            bookings.erase(it);
-        }
+        // clear issued items to free memory
+        for (auto &hourEntry : it->second)
+            hourEntry.second.issuedItems.clear();
+
+        bookings.erase(it);
     }
 }
 
@@ -155,18 +169,4 @@ void print(type courtType)
 void print(Court &court)
 {
     std::cout << std::setw(16) << court << std::endl;
-}
-
-bool Court::addIssuedItem(const std::string &date, int hour, const std::string &item)
-{
-    auto dateIt = bookings.find(date);
-    if (dateIt == bookings.end())
-        return false;
-
-    auto hourIt = dateIt->second.find(hour);
-    if (hourIt == dateIt->second.end() || !hourIt->second.isBooked())
-        return false;
-
-    hourIt->second.issuedItems.push_back(item);
-    return true;
 }

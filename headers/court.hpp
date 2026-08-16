@@ -80,7 +80,7 @@ public:
     std::string issuedItemsToString() const;
 };
 
-// Parent Class Court
+// -------------------- Abstract Classes --------------------
 class Court
 {
 private:
@@ -187,6 +187,7 @@ public:
 class LawnTennis : public Court
 {
 public:
+    // constructor
     LawnTennis(courtStatus currState);
     LawnTennis(const int number, courtStatus currState);
     std::vector<std::string> issueItems() const override;
